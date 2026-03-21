@@ -1,0 +1,21 @@
+{
+  "name": "custom-forms",
+  "private": true,
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx apps/api/src/db/seed.ts"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.0",
+    "dotenv": "^16.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.40.0",
+    "postgres": "^3.4.0"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d.get\\(''''dependencies'''',{}\\).get\\(''''ajv'''',''''not found''''\\), d.get\\(''''dependencies'''',{}\\).get\\(''''ajv-formats'''',''''not found''''\\)\\)\")",
+      "Bash(node -e \"console.log\\(require\\(''./node_modules/ajv/package.json''\\).version, require\\(''./node_modules/ajv-formats/package.json''\\).version\\)\")"
+    ]
+  }
+}

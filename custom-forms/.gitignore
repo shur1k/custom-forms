@@ -3,3 +3,12 @@ dist/
 .env
 .nx/
 *.tsbuildinfo
+.DS_Store
+.claude/
+
+
+
+.nx/cache
+.nx/workspace-data
+.claude/worktrees
+.claude/settings.local.json

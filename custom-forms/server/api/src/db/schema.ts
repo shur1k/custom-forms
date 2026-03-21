@@ -5,6 +5,7 @@ import {
   jsonb,
   timestamp,
 } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
 
 // ---------------------------------------------------------------------------
 // Lookup tables (seeded at migration time)
@@ -71,3 +72,22 @@ export const schemasVersions = pgTable('schemas_versions', {
   schema:      jsonb('schema').$type<Record<string, any>>(),
   publishedAt: timestamp('published_at', { withTimezone: true }).defaultNow().notNull(),
 });
+
+// ---------------------------------------------------------------------------
+// Relations (required for Drizzle relational query API: `with: { type: true }`)
+// ---------------------------------------------------------------------------
+
+export const schemasRelations = relations(schemas, ({ one, many }) => ({
+  type:     one(schemasTypes, { fields: [schemas.typeId],  references: [schemasTypes.id] }),
+  owner:    one(users,        { fields: [schemas.ownerId], references: [users.id] }),
+  versions: many(schemasVersions),
+}));
+
+export const schemasVersionsRelations = relations(schemasVersions, ({ one }) => ({
+  schema: one(schemas, { fields: [schemasVersions.schemaId], references: [schemas.id] }),
+}));
+
+export const usersRelations = relations(users, ({ one, many }) => ({
+  role:    one(roles,   { fields: [users.roleId], references: [roles.id] }),
+  schemas: many(schemas),
+}));

@@ -3,8 +3,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-  schema: './apps/api/src/db/schema.ts',
-  out: './apps/api/src/db/migrations',
+  schema: './server/api/src/db/schema.ts',
+  out: './server/api/src/db/migrations',
   dialect: 'postgresql',
   dbCredentials: { url: process.env['DATABASE_URL']! },
 });

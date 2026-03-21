@@ -6,16 +6,52 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push",
-    "db:seed": "tsx apps/api/src/db/seed.ts"
+    "db:seed": "tsx server/api/src/db/seed.ts"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.0",
+    "@nx/js": "22.6.1",
+    "@nx/nest": "^22.6.1",
+    "@nx/node": "22.6.1",
+    "@nx/web": "22.6.1",
+    "@nx/webpack": "22.6.1",
+    "@swc-node/register": "~1.11.1",
+    "@swc/core": "~1.15.5",
+    "@swc/helpers": "~0.5.18",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/node": "20.19.9",
+    "@types/passport-jwt": "^4.0.1",
     "dotenv": "^16.0.0",
+    "drizzle-kit": "^0.31.0",
+    "jest": "^30.3.0",
+    "nx": "22.6.1",
+    "prettier": "~3.6.2",
+    "ts-jest": "^29.4.6",
     "tsx": "^4.0.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@nestjs/common": "^11.1.17",
+    "@nestjs/core": "^11.1.17",
+    "@nestjs/jwt": "^11.0.2",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/platform-express": "^11.1.17",
+    "@nestjs/swagger": "^11.2.6",
+    "axios": "^1.6.0",
+    "bcryptjs": "^3.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.4",
     "drizzle-orm": "^0.40.0",
-    "postgres": "^3.4.0"
-  }
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "postgres": "^3.4.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.3.0"
+  },
+  "nx": {}
 }

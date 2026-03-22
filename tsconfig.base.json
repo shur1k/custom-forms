@@ -18,7 +18,8 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@custom-forms/api-client": ["client/libs/api-client/src/index.ts"]
+      "@custom-forms/api-client": ["client/libs/api-client/src/index.ts"],
+      "@custom-forms/ui": ["client/libs/ui/src/index.ts"]
     }
   }
 }

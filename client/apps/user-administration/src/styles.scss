@@ -1,1 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+@use '../../../libs/ui/src/styles/tokens';
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--cf-font-sans);
+  font-size: var(--cf-text-base);
+  color: var(--cf-color-text);
+  background: var(--cf-color-bg);
+  line-height: var(--cf-leading-normal);
+  -webkit-font-smoothing: antialiased;
+}

@@ -85,13 +85,55 @@ The API starts at `http://localhost:3000`.
 
 ## Frontend
 
+### Development
+
+Start all apps together (remotes must be running for the shell to load them):
+
+```bash
+npm run fe:serve
+```
+
+Or start apps individually:
+
+| Command | App | Port |
+|---|---|---|
+| `npm run fe:serve:shell` | Shell (host) | 4200 |
+| `npm run fe:serve:designer` | Designer MFE | 4201 |
+| `npm run fe:serve:runtime` | Runtime MFE | 4202 |
+| `npm run fe:serve:user-admin` | User Administration MFE | 4203 |
+
+All apps run with file-watch and live-reload enabled by default.
+
+### Production build
+
+```bash
+npm run fe:build
+```
+
+Or build a single app:
+
 | Command | Description |
 |---|---|
-| `npm exec nx serve shell` | Start the shell app (port 4200) |
-| `npm exec nx serve designer` | Start the designer MFE (port 4201) |
-| `npm exec nx serve runtime` | Start the runtime MFE (port 4202) |
-| `npm exec nx serve user-administration` | Start the user-administration MFE (port 4203) |
-| `npm exec nx storybook ui` | Start Storybook for shared UI components (port 6006) |
+| `npm run fe:build:shell` | Build shell |
+| `npm run fe:build:designer` | Build designer MFE |
+| `npm run fe:build:runtime` | Build runtime MFE |
+| `npm run fe:build:user-admin` | Build user-administration MFE |
+
+### Storybook — shared UI components
+
+```bash
+npm run fe:storybook
+```
+
+Opens at `http://localhost:4400`. Documents `Button`, `Input`, and `Select` from `@custom-forms/ui`.
+
+To produce a static Storybook bundle (e.g. for CI or hosting):
+
+```bash
+npm run fe:storybook:build
+```
+
+Output goes to `dist/storybook/ui`.
 
 ---
 

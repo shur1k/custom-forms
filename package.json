@@ -10,7 +10,19 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push",
-    "db:seed": "tsx server/api/src/db/seed.ts"
+    "db:seed": "tsx server/api/src/db/seed.ts",
+    "fe:serve": "nx run-many --target=serve --projects=shell,designer,runtime,user-administration --parallel=4",
+    "fe:serve:shell": "nx serve shell",
+    "fe:serve:designer": "nx serve designer",
+    "fe:serve:runtime": "nx serve runtime",
+    "fe:serve:user-admin": "nx serve user-administration",
+    "fe:build": "nx run-many --target=build --projects=shell,designer,runtime,user-administration --parallel=4 --configuration=production",
+    "fe:build:shell": "nx build shell --configuration=production",
+    "fe:build:designer": "nx build designer --configuration=production",
+    "fe:build:runtime": "nx build runtime --configuration=production",
+    "fe:build:user-admin": "nx build user-administration --configuration=production",
+    "fe:storybook": "nx run ui:storybook",
+    "fe:storybook:build": "nx run ui:build-storybook"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "~2.1.2",

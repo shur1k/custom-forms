@@ -49,10 +49,16 @@ docker compose -f docker-compose.dev.yml up -d
 npm run db:migrate
 ```
 
-### Seed reference data (roles + schema types)
+### Seed reference data (roles + schema types + superuser)
 
 ```bash
 npm run db:seed
+```
+
+### Stop the database
+
+```bash
+docker compose -f docker-compose.dev.yml down
 ```
 
 ### Other DB commands
@@ -63,41 +69,49 @@ npm run db:seed
 | `npm run db:push` | Push schema directly to DB (dev only, no migration file) |
 | `npm run db:studio` | Open Drizzle Studio (visual DB browser) |
 
-### Stop the database
-
-```bash
-docker compose -f docker-compose.dev.yml down
-```
-
 ---
 
 ## Backend API
 
-### Run in development mode (with watch)
-
-```bash
-npm exec nx serve api
-```
+| Command | Description |
+|---|---|
+| `npm run api:serve` | Start API in development mode (watch) |
+| `npm run api:build` | Build API for production |
+| `npm run api:test` | Run API unit tests |
 
 The API starts at `http://localhost:3000`.
 
-### Run unit tests
+---
+
+## Frontend
+
+| Command | Description |
+|---|---|
+| `npm exec nx serve shell` | Start the shell app (port 4200) |
+| `npm exec nx serve designer` | Start the designer MFE (port 4201) |
+| `npm exec nx serve runtime` | Start the runtime MFE (port 4202) |
+| `npm exec nx serve user-administration` | Start the user-administration MFE (port 4203) |
+| `npm exec nx storybook ui` | Start Storybook for shared UI components (port 6006) |
+
+---
+
+## API Client (code generation)
+
+The TypeScript API client is auto-generated from the backend's Swagger spec.
+Run the API first, then regenerate whenever the backend changes:
 
 ```bash
-npm exec nx test api
+npm run api:serve &
+npm run api:generate-client
 ```
 
-### Build for production
-
-```bash
-npm exec nx build api
-```
+Generated types are available at `@custom-forms/api-client`.
 
 ---
 
 ## API Reference
 
-Interactive Swagger docs are available at:
+Interactive Swagger docs:
 
 ```
 http://localhost:3000/api/docs
@@ -121,3 +135,10 @@ http://localhost:3000/api/docs
 | DELETE | `/api/v1/schemas/:id` | Delete a schema |
 | POST | `/api/v1/schemas/:id/publish` | Snapshot current schema as a new version |
 | GET | `/api/v1/schemas/:id/versions` | List published versions |
+
+### User endpoints (admin JWT required)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/v1/users` | List all users |
+| PATCH | `/api/v1/users/:id/role` | Update a user's role |

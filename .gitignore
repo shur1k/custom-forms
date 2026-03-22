@@ -12,3 +12,6 @@ dist/
 .nx/workspace-data
 .claude/worktrees
 .claude/settings.local.json
+.angular
+
+vitest.config.*.timestamp*

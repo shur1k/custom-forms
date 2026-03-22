@@ -15,3 +15,4 @@ dist/
 .angular
 
 vitest.config.*.timestamp*
+__screenshots__/

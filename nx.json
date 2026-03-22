@@ -22,6 +22,15 @@
         "{workspaceRoot}/.eslintignore",
         "{workspaceRoot}/eslint.config.mjs"
       ]
+    },
+    "@angular/build:application": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    },
+    "@angular/build:unit-test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
     }
   },
   "defaultBase": "master",
@@ -45,6 +54,18 @@
         "testTargetName": "test",
         "extractI18nTargetName": "extract-i18n"
       }
+    },
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "eslint:lint"
+      }
     }
   ],
   "analytics": false,
@@ -59,7 +80,10 @@
       "standalone": true
     },
     "@nx/angular:application": {
+      "e2eTestRunner": "playwright",
+      "linter": "eslint",
       "style": "scss",
+      "unitTestRunner": "vitest-angular",
       "standalone": true,
       "routing": true
     }

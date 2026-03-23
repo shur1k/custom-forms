@@ -11,5 +11,5 @@ export const adminGuard: CanActivateFn = () => {
   } catch {
     // invalid token
   }
-  return router.createUrlTree(['/']);
+  return router.createUrlTree(['/runtime']);
 };

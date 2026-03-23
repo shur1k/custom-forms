@@ -16,6 +16,9 @@
         "development": {
           "target": "user-administration:esbuild:development",
           "dev": true
+        },
+        "dev-static": {
+          "target": "user-administration:esbuild:development"
         }
       },
       "defaultConfiguration": "production"
@@ -42,8 +45,8 @@
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "user-administration:build",
-        "port": 4200,
+        "buildTarget": "user-administration:build:dev-static",
+        "port": 4203,
         "staticFilePath": "dist/client/apps/user-administration/browser",
         "spa": true
       }

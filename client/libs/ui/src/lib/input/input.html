@@ -1,12 +1,14 @@
-@if (label()) {
-  <label class="input__label">{{ label() }}</label>
-}
-<input
-  class="input__field"
-  [type]="type()"
-  [placeholder]="placeholder()"
-  [value]="value"
-  [disabled]="isDisabled"
-  (input)="onInput($event)"
-  (blur)="onBlur()"
-/>
+<label class="input__label">
+  @if (label()) {
+    <span class="input__label-text">{{ label() }}</span>
+  }
+  <input
+    class="input__field"
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [value]="value"
+    [disabled]="isDisabled"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+</label>

@@ -1,0 +1,31 @@
+<div class="auth-page">
+  <form class="auth-card" [formGroup]="form" (ngSubmit)="submit()">
+    <h1 class="auth-card__title">Sign in</h1>
+
+    <lib-input
+      label="Email"
+      type="email"
+      placeholder="you@example.com"
+      formControlName="email"
+    />
+
+    <lib-input
+      label="Password"
+      type="password"
+      placeholder="••••••••"
+      formControlName="password"
+    />
+
+    @if (error()) {
+      <p class="auth-card__error">{{ error() }}</p>
+    }
+
+    <lib-button type="submit" [disabled]="loading()">
+      {{ loading() ? 'Signing in…' : 'Sign in' }}
+    </lib-button>
+
+    <p class="auth-card__footer">
+      No account? <a routerLink="/register">Register</a>
+    </p>
+  </form>
+</div>

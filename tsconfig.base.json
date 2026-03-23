@@ -19,7 +19,8 @@
     "baseUrl": ".",
     "paths": {
       "@custom-forms/api-client": ["client/libs/api-client/src/index.ts"],
-      "@custom-forms/ui": ["client/libs/ui/src/index.ts"]
+      "@custom-forms/ui": ["client/libs/ui/src/index.ts"],
+      "@custom-forms/auth": ["client/libs/auth/src/index.ts"]
     }
   }
 }

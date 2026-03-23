@@ -16,6 +16,9 @@
         "development": {
           "target": "runtime:esbuild:development",
           "dev": true
+        },
+        "dev-static": {
+          "target": "runtime:esbuild:development"
         }
       },
       "defaultConfiguration": "production"
@@ -42,8 +45,8 @@
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "runtime:build",
-        "port": 4200,
+        "buildTarget": "runtime:build:dev-static",
+        "port": 4202,
         "staticFilePath": "dist/client/apps/runtime/browser",
         "spa": true
       }

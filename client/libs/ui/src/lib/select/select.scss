@@ -6,6 +6,12 @@
 
 .select {
   &__label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cf-space-1);
+  }
+
+  &__label-text {
     font-family: var(--cf-font-sans);
     font-size: var(--cf-text-sm);
     font-weight: var(--cf-font-medium);

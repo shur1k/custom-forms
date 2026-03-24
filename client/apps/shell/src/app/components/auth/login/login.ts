@@ -19,13 +19,28 @@ export class Login {
 
   readonly error = signal<string | null>(null);
   readonly loading = signal(false);
+  readonly submitted = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
 
+  emailError(): string | null {
+    if (!this.submitted()) return null;
+    const ctrl = this.form.controls.email;
+    if (ctrl.hasError('required')) return 'Email is required.';
+    if (ctrl.hasError('email')) return 'Please enter a valid email address.';
+    return null;
+  }
+
+  passwordError(): string | null {
+    if (!this.submitted()) return null;
+    return this.form.controls.password.hasError('required') ? 'Password is required.' : null;
+  }
+
   submit(): void {
+    this.submitted.set(true);
     if (this.form.invalid) return;
     this.loading.set(true);
     this.error.set(null);

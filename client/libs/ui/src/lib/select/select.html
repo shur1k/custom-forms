@@ -5,7 +5,7 @@
   <select
     class="select__field"
     [value]="value"
-    [disabled]="isDisabled"
+    [disabled]="isDisabled()"
     (change)="onSelect($event)"
     (blur)="onBlur()"
   >

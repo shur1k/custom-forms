@@ -21,12 +21,24 @@ export class AuthService {
   );
 
   readonly isLoggedIn = computed(() => !!this._token());
+
   readonly isAdmin = computed(() => {
     const token = this._token();
     if (!token) return false;
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.role === 'admin';
+    } catch {
+      return false;
+    }
+  });
+
+  readonly isSuperuser = computed(() => {
+    const token = this._token();
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.role === 'superuser';
     } catch {
       return false;
     }

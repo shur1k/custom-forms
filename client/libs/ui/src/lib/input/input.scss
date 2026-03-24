@@ -44,5 +44,21 @@
       color: var(--cf-color-text-disabled);
       cursor: not-allowed;
     }
+
+    &--error {
+      border-color: var(--cf-color-danger-text);
+
+      &:focus {
+        border-color: var(--cf-color-danger-text);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--cf-color-danger-text) 20%, transparent);
+      }
+    }
+  }
+
+  &__error {
+    font-family: var(--cf-font-sans);
+    font-size: var(--cf-text-xs);
+    color: var(--cf-color-danger-text);
+    line-height: var(--cf-leading-snug);
   }
 }

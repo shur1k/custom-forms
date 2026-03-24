@@ -47,6 +47,28 @@ describe('Input', () => {
     expect(span).toBeNull();
   });
 
+  it('shows error message when error input is provided', () => {
+    fixture.componentRef.setInput('error', 'Email is required.');
+    fixture.detectChanges();
+    const span = fixture.nativeElement.querySelector('.input__error') as HTMLElement;
+    expect(span).not.toBeNull();
+    expect(span.textContent?.trim()).toBe('Email is required.');
+  });
+
+  it('hides error element when error is null', () => {
+    fixture.componentRef.setInput('error', null);
+    fixture.detectChanges();
+    const span = fixture.nativeElement.querySelector('.input__error');
+    expect(span).toBeNull();
+  });
+
+  it('adds error modifier class to input when error is set', () => {
+    fixture.componentRef.setInput('error', 'Required');
+    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    expect(input.classList.contains('input__field--error')).toBe(true);
+  });
+
   describe('ControlValueAccessor', () => {
     it('writeValue updates the value property', () => {
       component.writeValue('hello');

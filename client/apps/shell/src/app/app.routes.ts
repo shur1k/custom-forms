@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Route } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
 
-import { adminGuard, authGuard, homeRedirectGuard, loggedInGuard } from './guards';
+import { adminGuard, authGuard, homeRedirectGuard, loggedInGuard, superuserGuard } from './guards';
 import { Home } from './components';
 
 @Component({ template: '', changeDetection: ChangeDetectionStrategy.OnPush })
@@ -52,7 +52,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'user-administration',
-    canActivate: [authGuard, adminGuard],
+    canActivate: [authGuard, superuserGuard],
     loadChildren: () =>
       loadRemoteModule({
         remoteEntry: 'http://localhost:4203/remoteEntry.json',

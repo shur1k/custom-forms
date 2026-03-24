@@ -31,18 +31,25 @@ export class AuthService {
       .values({ email: dto.email, passwordHash, roleId: userRole.id })
       .returning({ id: users.id, email: users.email });
 
-    return { accessToken: this.jwtService.sign({ sub: newUser.id, email: newUser.email }) };
+    return { accessToken: this.jwtService.sign({ sub: newUser.id, email: newUser.email, role: userRole.name }) };
   }
 
   async login(dto: LoginDto): Promise<{ accessToken: string }> {
     const user = await this.db.query.users.findFirst({
       where: eq(users.email, dto.email),
+      with: { role: true },
     });
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    return { accessToken: this.jwtService.sign({ sub: user.id, email: user.email }) };
+    return {
+      accessToken: this.jwtService.sign({
+        sub: user.id,
+        email: user.email,
+        role: user.role.name,
+      }),
+    };
   }
 }

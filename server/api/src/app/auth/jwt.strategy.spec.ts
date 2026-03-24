@@ -11,12 +11,12 @@ describe('JwtStrategy', () => {
   });
 
   it('returns user object when payload has sub', () => {
-    const result = strategy.validate({ sub: 'user-uuid', email: 'a@b.com' });
-    expect(result).toEqual({ userId: 'user-uuid', email: 'a@b.com' });
+    const result = strategy.validate({ sub: 'user-uuid', email: 'a@b.com', role: 'user' });
+    expect(result).toEqual({ userId: 'user-uuid', email: 'a@b.com', role: 'user' });
   });
 
   it('throws UnauthorizedException when sub is missing', () => {
-    expect(() => strategy.validate({ sub: '', email: 'a@b.com' }))
+    expect(() => strategy.validate({ sub: '', email: 'a@b.com', role: 'user' }))
       .toThrow(UnauthorizedException);
   });
 });

@@ -7,8 +7,9 @@ export const loggedInGuard: CanActivateFn = (): boolean | UrlTree => {
   if (!token) return true;
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
-    if (payload.role === 'admin') return router.createUrlTree(['/home']);
-    return router.createUrlTree(['/runtime']);
+    if (payload.role === 'admin' || payload.role === 'superuser') return router.createUrlTree(['/home']);
+    if (payload.role === 'user') return router.createUrlTree(['/runtime']);
+    return true; // missing/unknown role — allow login page to re-authenticate
   } catch {
     return true;
   }

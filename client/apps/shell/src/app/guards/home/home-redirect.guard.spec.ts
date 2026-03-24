@@ -32,6 +32,12 @@ describe('homeRedirectGuard', () => {
     expect(runGuard()).toEqual(router.createUrlTree(['/home']));
   });
 
+  it('redirects to /home for superuser role', () => {
+    localStorage.setItem('accessToken', makeToken('superuser'));
+    const router = TestBed.inject(Router);
+    expect(runGuard()).toEqual(router.createUrlTree(['/home']));
+  });
+
   it('redirects to /runtime for user role', () => {
     localStorage.setItem('accessToken', makeToken('user'));
     const router = TestBed.inject(Router);
@@ -40,6 +46,13 @@ describe('homeRedirectGuard', () => {
 
   it('redirects to /login when token is malformed', () => {
     localStorage.setItem('accessToken', 'not.a.valid.jwt');
+    const router = TestBed.inject(Router);
+    expect(runGuard()).toEqual(router.createUrlTree(['/login']));
+  });
+
+  it('redirects to /login when token has no role field', () => {
+    const payload = btoa(JSON.stringify({ sub: '1' }));
+    localStorage.setItem('accessToken', `header.${payload}.sig`);
     const router = TestBed.inject(Router);
     expect(runGuard()).toEqual(router.createUrlTree(['/login']));
   });

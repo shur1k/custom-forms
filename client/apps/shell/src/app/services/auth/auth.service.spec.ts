@@ -69,6 +69,30 @@ describe('AuthService', () => {
     expect(svc.isAdmin()).toBe(false);
   });
 
+  it('isSuperuser is false when no token', () => {
+    expect(service.isSuperuser()).toBe(false);
+  });
+
+  it('isSuperuser is true for a valid superuser JWT', () => {
+    localStorage.setItem(TOKEN_KEY, makeToken('superuser'));
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [AuthService, provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    });
+    const svc = TestBed.inject(AuthService);
+    expect(svc.isSuperuser()).toBe(true);
+  });
+
+  it('isSuperuser is false for an admin role JWT', () => {
+    localStorage.setItem(TOKEN_KEY, makeToken('admin'));
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [AuthService, provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    });
+    const svc = TestBed.inject(AuthService);
+    expect(svc.isSuperuser()).toBe(false);
+  });
+
   it('login() POSTs credentials and stores the token', () => {
     service.login({ email: 'a@b.com', password: 'pass' }).subscribe();
 

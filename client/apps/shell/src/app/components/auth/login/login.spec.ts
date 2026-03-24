@@ -39,6 +39,23 @@ describe('Login', () => {
     expect(authSpy.login).not.toHaveBeenCalled();
   });
 
+  it('shows no validation errors before submit is attempted', () => {
+    expect(component.emailError()).toBeNull();
+    expect(component.passwordError()).toBeNull();
+  });
+
+  it('shows required errors after submit with empty form', () => {
+    component.submit();
+    expect(component.emailError()).toBe('Email is required.');
+    expect(component.passwordError()).toBe('Password is required.');
+  });
+
+  it('shows invalid email error after submit with bad email', () => {
+    component.form.setValue({ email: 'not-an-email', password: 'pass' });
+    component.submit();
+    expect(component.emailError()).toBe('Please enter a valid email address.');
+  });
+
   it('calls auth.login with form values on valid submit', () => {
     component.form.setValue({ email: 'a@b.com', password: 'pass' });
     component.submit();

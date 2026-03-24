@@ -4,11 +4,15 @@
   }
   <input
     class="input__field"
+    [class.input__field--error]="error()"
     [type]="type()"
     [placeholder]="placeholder()"
     [value]="value"
-    [disabled]="isDisabled"
+    [disabled]="isDisabled()"
     (input)="onInput($event)"
     (blur)="onBlur()"
   />
 </label>
+@if (error()) {
+  <span class="input__error">{{ error() }}</span>
+}

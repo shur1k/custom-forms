@@ -9,5 +9,11 @@
       <h2 class="home-page__card-title">Form Designer</h2>
       <p class="home-page__card-desc">Create and edit form schemas</p>
     </a>
+    @if (auth.isSuperuser()) {
+      <a class="home-page__card" routerLink="/user-administration">
+        <h2 class="home-page__card-title">User Administration</h2>
+        <p class="home-page__card-desc">Manage users and roles</p>
+      </a>
+    }
   </div>
 </div>

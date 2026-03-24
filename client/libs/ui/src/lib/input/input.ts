@@ -3,6 +3,7 @@ import {
   Component,
   forwardRef,
   input,
+  signal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 
@@ -24,9 +25,10 @@ export class Input implements ControlValueAccessor {
   label = input('');
   type = input<'text' | 'email' | 'password'>('text');
   placeholder = input('');
+  error = input<string | null>(null);
 
   value = '';
-  isDisabled = false;
+  isDisabled = signal(false);
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
@@ -44,7 +46,7 @@ export class Input implements ControlValueAccessor {
   }
 
   setDisabledState(disabled: boolean): void {
-    this.isDisabled = disabled;
+    this.isDisabled.set(disabled);
   }
 
   onInput(event: Event): void {

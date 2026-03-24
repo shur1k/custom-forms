@@ -31,6 +31,12 @@ describe('loggedInGuard', () => {
     expect(runGuard()).toEqual(router.createUrlTree(['/home']));
   });
 
+  it('redirects to /home for superuser role', () => {
+    localStorage.setItem('accessToken', makeToken('superuser'));
+    const router = TestBed.inject(Router);
+    expect(runGuard()).toEqual(router.createUrlTree(['/home']));
+  });
+
   it('redirects to /runtime for user role', () => {
     localStorage.setItem('accessToken', makeToken('user'));
     const router = TestBed.inject(Router);
@@ -39,6 +45,12 @@ describe('loggedInGuard', () => {
 
   it('allows navigation when token is malformed', () => {
     localStorage.setItem('accessToken', 'not.a.valid.jwt');
+    expect(runGuard()).toBe(true);
+  });
+
+  it('allows navigation when token has no role field', () => {
+    const payload = btoa(JSON.stringify({ sub: '1' }));
+    localStorage.setItem('accessToken', `header.${payload}.sig`);
     expect(runGuard()).toBe(true);
   });
 });

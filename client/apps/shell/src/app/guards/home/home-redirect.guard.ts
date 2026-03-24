@@ -7,8 +7,9 @@ export const homeRedirectGuard: CanActivateFn = (): UrlTree => {
   if (!token) return router.createUrlTree(['/login']);
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
-    if (payload.role === 'admin') return router.createUrlTree(['/home']);
-    return router.createUrlTree(['/runtime']);
+    if (payload.role === 'admin' || payload.role === 'superuser') return router.createUrlTree(['/home']);
+    if (payload.role === 'user') return router.createUrlTree(['/runtime']);
+    return router.createUrlTree(['/login']); // missing/unknown role — force re-login
   } catch {
     return router.createUrlTree(['/login']);
   }

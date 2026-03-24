@@ -3,6 +3,7 @@ import {
   Component,
   forwardRef,
   input,
+  signal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -31,7 +32,7 @@ export class Select implements ControlValueAccessor {
   placeholder = input('Select…');
 
   value = '';
-  isDisabled = false;
+  isDisabled = signal(false);
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
@@ -49,7 +50,7 @@ export class Select implements ControlValueAccessor {
   }
 
   setDisabledState(disabled: boolean): void {
-    this.isDisabled = disabled;
+    this.isDisabled.set(disabled);
   }
 
   onSelect(event: Event): void {

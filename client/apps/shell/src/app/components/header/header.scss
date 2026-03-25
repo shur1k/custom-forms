@@ -1,0 +1,33 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--cf-space-6);
+  height: 56px;
+  background: var(--cf-color-bg);
+  border-bottom: 1px solid var(--cf-color-border);
+  box-shadow: var(--cf-shadow-sm);
+
+  &__brand {
+    font-size: var(--cf-text-lg);
+    font-weight: var(--cf-font-semibold);
+    color: var(--cf-color-primary);
+  }
+
+  &__logout {
+    padding: var(--cf-space-2) var(--cf-space-4);
+    font-size: var(--cf-text-sm);
+    font-weight: var(--cf-font-medium);
+    color: var(--cf-color-text-muted);
+    background: transparent;
+    border: 1px solid var(--cf-color-border);
+    border-radius: var(--cf-radius-md);
+    cursor: pointer;
+    transition: var(--cf-transition-colors);
+
+    &:hover {
+      color: var(--cf-color-text);
+      border-color: var(--cf-color-text-muted);
+    }
+  }
+}

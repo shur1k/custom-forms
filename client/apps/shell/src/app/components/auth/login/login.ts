@@ -6,7 +6,7 @@ import { Button, Input } from '@custom-forms/ui';
 import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'cf-login',
   imports: [ReactiveFormsModule, RouterLink, Button, Input],
   templateUrl: './login.html',
   styleUrl: './login.scss',

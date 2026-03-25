@@ -6,7 +6,7 @@ import { Button, Input } from '@custom-forms/ui';
 import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
-  selector: 'app-register',
+  selector: 'cf-register',
   imports: [ReactiveFormsModule, RouterLink, Button, Input],
   templateUrl: './register.html',
   styleUrl: './register.scss',

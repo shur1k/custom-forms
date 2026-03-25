@@ -16,6 +16,10 @@ module.exports = withNativeFederation({
     'rxjs/fetch',
     'rxjs/testing',
     'rxjs/webSocket',
+    '@ag-grid-community/angular',
+    '@ag-grid-community/core',
+    '@ag-grid-community/client-side-row-model',
+    '@ag-grid-community/styles',
   ],
 
   features: {

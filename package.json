@@ -89,6 +89,10 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@ag-grid-community/angular": "^32.3.9",
+    "@ag-grid-community/client-side-row-model": "^32.3.9",
+    "@ag-grid-community/core": "^32.3.9",
+    "@ag-grid-community/styles": "^32.3.9",
     "@angular/animations": "^21.2.5",
     "@angular/common": "^21.2.5",
     "@angular/compiler": "^21.2.5",

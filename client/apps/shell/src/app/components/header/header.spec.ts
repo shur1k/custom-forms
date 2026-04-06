@@ -23,9 +23,11 @@ describe('Header', () => {
     fixture.detectChanges();
   });
 
-  it('should render brand name', () => {
+  it('should render brand link to /home', () => {
     const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.app-header__brand')?.textContent?.trim()).toBe('Custom Forms');
+    const brand = el.querySelector('.app-header__brand');
+    expect(brand?.textContent?.trim()).toBe('Custom Forms');
+    expect(brand?.getAttribute('href')).toBe('/home');
   });
 
   it('should call auth.logout() when logout button clicked', () => {

@@ -1,19 +1,22 @@
 <div class="home-page">
   <h1 class="home-page__title">Welcome</h1>
+
   <div class="home-page__cards">
     <a class="home-page__card" routerLink="/runtime">
       <h2 class="home-page__card-title">Form Runner</h2>
       <p class="home-page__card-desc">Run and fill out forms</p>
     </a>
+
     <a class="home-page__card" routerLink="/designer">
       <h2 class="home-page__card-title">Form Designer</h2>
       <p class="home-page__card-desc">Create and edit form schemas</p>
     </a>
+
     @if (auth.isSuperuser()) {
-      <a class="home-page__card" routerLink="/user-administration">
-        <h2 class="home-page__card-title">User Administration</h2>
-        <p class="home-page__card-desc">Manage users and roles</p>
-      </a>
+    <a class="home-page__card" routerLink="/user-administration">
+      <h2 class="home-page__card-title">User Administration</h2>
+      <p class="home-page__card-desc">Manage users and roles</p>
+    </a>
     }
   </div>
 </div>

@@ -1,0 +1,12 @@
+<div class="schema-viewer">
+  <div class="schema-viewer__toolbar">
+    <a class="schema-viewer__back" [routerLink]="['../']">← Back to Editor</a>
+    <h2 class="schema-viewer__title">JSON Schema</h2>
+  </div>
+
+  @if (isLoading()) {
+    <div class="schema-viewer__loading">Loading…</div>
+  } @else {
+    <pre class="schema-viewer__code">{{ prettySchema() }}</pre>
+  }
+</div>

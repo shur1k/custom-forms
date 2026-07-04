@@ -94,6 +94,7 @@
     "@ag-grid-community/core": "^32.3.9",
     "@ag-grid-community/styles": "^32.3.9",
     "@angular/animations": "^21.2.5",
+    "@angular/cdk": "^21.2.5",
     "@angular/common": "^21.2.5",
     "@angular/compiler": "^21.2.5",
     "@angular/compiler-cli": "^21.2.5",

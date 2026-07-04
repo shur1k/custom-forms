@@ -68,6 +68,8 @@
           }
         ],
         "styles": [
+          "node_modules/@ag-grid-community/styles/ag-grid.css",
+          "node_modules/@ag-grid-community/styles/ag-theme-alpine.css",
           "client/apps/designer/src/styles.scss"
         ],
         "polyfills": [
@@ -76,6 +78,12 @@
       },
       "configurations": {
         "production": {
+          "fileReplacements": [
+            {
+              "replace": "client/apps/designer/src/environments/environment.ts",
+              "with": "client/apps/designer/src/environments/environment.production.ts"
+            }
+          ],
           "budgets": [
             {
               "type": "initial",

@@ -7,6 +7,8 @@ import { SchemasService } from './schemas.service';
 import { CreateSchemaDto } from './dto/create-schema.dto';
 import { UpdateSchemaDto } from './dto/update-schema.dto';
 
+type ReqUser = { user: { userId: string; role: string } };
+
 @ApiTags('schemas')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -18,19 +20,23 @@ export class SchemasController {
   @ApiOperation({ summary: 'List all schemas' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  findAll(@Query('page') page = 1, @Query('limit') limit = 20) {
-    return this.schemasService.findAll(+page, +limit);
+  findAll(
+    @Query('page') page = 1,
+    @Query('limit') limit = 20,
+    @Request() req: ReqUser,
+  ) {
+    return this.schemasService.findAll(+page, +limit, req.user.userId, req.user.role);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get one schema' })
-  findOne(@Param('id') id: string) {
-    return this.schemasService.findOne(id);
+  findOne(@Param('id') id: string, @Request() req: ReqUser) {
+    return this.schemasService.findOne(id, req.user.userId, req.user.role);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create a schema' })
-  create(@Body() dto: CreateSchemaDto, @Request() req: { user: { userId: string } }) {
+  create(@Body() dto: CreateSchemaDto, @Request() req: ReqUser) {
     return this.schemasService.create(dto, req.user.userId);
   }
 
@@ -39,20 +45,20 @@ export class SchemasController {
   update(
     @Param('id') id: string,
     @Body() dto: UpdateSchemaDto,
-    @Request() req: { user: { userId: string } },
+    @Request() req: ReqUser,
   ) {
     return this.schemasService.update(id, dto, req.user.userId);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a schema' })
-  remove(@Param('id') id: string, @Request() req: { user: { userId: string } }) {
+  remove(@Param('id') id: string, @Request() req: ReqUser) {
     return this.schemasService.remove(id, req.user.userId);
   }
 
   @Post(':id/publish')
   @ApiOperation({ summary: 'Publish a version snapshot' })
-  publish(@Param('id') id: string, @Request() req: { user: { userId: string } }) {
+  publish(@Param('id') id: string, @Request() req: ReqUser) {
     return this.schemasService.publish(id, req.user.userId);
   }
 

@@ -30,12 +30,21 @@ export class SchemasService {
         slug: dto.slug ?? null,
       })
       .returning();
-    return created;
+    return { ...created, type };
   }
 
-  async findAll(page = 1, limit = 20) {
+  async findAll(page = 1, limit = 20, userId: string, role: string) {
     const offset = (page - 1) * limit;
+    if (role === 'superuser') {
+      return this.db.query.schemas.findMany({
+        orderBy: [desc(schemas.createdAt)],
+        limit,
+        offset,
+        with: { type: true, owner: { columns: { email: true } } },
+      });
+    }
     return this.db.query.schemas.findMany({
+      where: eq(schemas.ownerId, userId),
       orderBy: [desc(schemas.createdAt)],
       limit,
       offset,
@@ -43,12 +52,15 @@ export class SchemasService {
     });
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, userId?: string, role?: string) {
     const schema = await this.db.query.schemas.findFirst({
       where: eq(schemas.id, id),
       with: { type: true },
     });
     if (!schema) throw new NotFoundException('Schema not found');
+    if (userId && role !== 'superuser' && schema.ownerId !== userId) {
+      throw new ForbiddenException();
+    }
     return schema;
   }
 

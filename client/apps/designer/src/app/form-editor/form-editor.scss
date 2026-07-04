@@ -1,0 +1,97 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--cf-color-bg-subtle);
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--cf-space-6);
+    height: 56px;
+    background: var(--cf-color-bg);
+    border-bottom: 1px solid var(--cf-color-border);
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: var(--cf-text-base);
+    font-weight: var(--cf-font-semibold);
+    color: var(--cf-color-text);
+  }
+
+  &__type {
+    font-weight: var(--cf-font-normal);
+    color: var(--cf-color-text-muted);
+    font-size: var(--cf-text-sm);
+  }
+
+  &__toolbar-actions {
+    display: flex;
+    gap: var(--cf-space-2);
+    align-items: center;
+  }
+
+  &__btn {
+    padding: var(--cf-space-2) var(--cf-space-4);
+    font-size: var(--cf-text-sm);
+    font-weight: var(--cf-font-medium);
+    border-radius: var(--cf-radius-md);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    &--primary {
+      background: var(--cf-color-primary);
+      color: #fff;
+      &:hover:not(:disabled) { opacity: 0.9; }
+    }
+
+    &--secondary {
+      background: transparent;
+      border: 1px solid var(--cf-color-border);
+      color: var(--cf-color-text);
+      &:hover { background: var(--cf-color-bg-subtle); }
+    }
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    font-size: var(--cf-text-lg);
+    color: var(--cf-color-text-muted);
+  }
+
+  &__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__palette {
+    width: 220px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--cf-color-border);
+    overflow-y: auto;
+  }
+
+  &__canvas {
+    flex: 1;
+    overflow: auto;
+  }
+
+  &__props {
+    width: 280px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--cf-color-border);
+    overflow-y: auto;
+  }
+}

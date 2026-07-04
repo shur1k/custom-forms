@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { BaseHttpService } from '@custom-forms/http';
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColDef, GridApi, GridReadyEvent, ModuleRegistry, CellValueChangedEvent } from '@ag-grid-community/core';
@@ -13,8 +13,6 @@ export interface UserRow {
   createdAt: string;
 }
 
-const API = 'http://localhost:3000/api/v1/users';
-
 @Component({
   selector: 'cf-user-list',
   templateUrl: './user-list.html',
@@ -23,7 +21,7 @@ const API = 'http://localhost:3000/api/v1/users';
   imports: [AgGridAngular],
 })
 export class UserList implements OnInit {
-  private readonly http = inject(HttpClient);
+  private readonly http = inject(BaseHttpService);
 
   rowData = signal<UserRow[]>([]);
   isPatching = signal(false);
@@ -47,7 +45,7 @@ export class UserList implements OnInit {
   getRowId = (params: { data: UserRow }) => params.data.id;
 
   ngOnInit(): void {
-    this.http.get<UserRow[]>(API).subscribe((users) => this.rowData.set(users));
+    this.http.get<UserRow[]>('/users').subscribe((users) => this.rowData.set(users));
   }
 
   onGridReady(params: GridReadyEvent<UserRow>): void {
@@ -62,7 +60,7 @@ export class UserList implements OnInit {
 
     this.isPatching.set(true);
 
-    this.http.patch<UserRow>(`${API}/${e.data.id}/role`, { role: newRole }).subscribe({
+    this.http.patch<UserRow>(`/users/${e.data.id}/role`, { role: newRole }).subscribe({
       next: (updated) => {
         this.gridApi.applyTransaction({ update: [updated] });
         this.isPatching.set(false);

@@ -1,0 +1,87 @@
+<div class="form-list">
+  <div class="form-list__toolbar">
+    <h1 class="form-list__title">My Forms</h1>
+    <button class="form-list__btn-new" type="button" (click)="openNewDialog()">
+      + New Form
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="form-list__spinner-overlay">
+      <div class="form-list__spinner"></div>
+    </div>
+  }
+
+  <ag-grid-angular
+    class="ag-theme-alpine form-list__grid"
+    [rowData]="rowData()"
+    [columnDefs]="columnDefs()"
+    [defaultColDef]="defaultColDef"
+    [getRowId]="getRowId"
+    (gridReady)="onGridReady($event)"
+    (rowClicked)="onRowClicked($event)"
+    (cellClicked)="onCellClicked($event)"
+  />
+
+  @if (showNewDialog()) {
+    <div class="dialog-backdrop" (click)="cancelDialog()">
+      <div class="dialog" (click)="$event.stopPropagation()">
+        <h2 class="dialog__title">New Form</h2>
+
+        <label class="dialog__field">
+          <span class="dialog__label">Title</span>
+          <input
+            class="dialog__input"
+            type="text"
+            [value]="newTitle()"
+            (input)="newTitle.set($any($event.target).value)"
+            placeholder="Enter form title"
+          />
+        </label>
+
+        <label class="dialog__field">
+          <span class="dialog__label">Type</span>
+          <select
+            class="dialog__select"
+            [value]="newType()"
+            (change)="newType.set($any($event.target).value)"
+          >
+            @for (opt of typeOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="dialog__actions">
+          <button class="dialog__btn dialog__btn--secondary" type="button" (click)="cancelDialog()">
+            Cancel
+          </button>
+          <button
+            class="dialog__btn dialog__btn--primary"
+            type="button"
+            [disabled]="isCreating() || !newTitle().trim()"
+            (click)="confirmCreate()"
+          >
+            {{ isCreating() ? 'Creating…' : 'Create' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (deleteTargetId()) {
+    <div class="dialog-backdrop" (click)="cancelDelete()">
+      <div class="dialog dialog--sm" (click)="$event.stopPropagation()">
+        <p class="dialog__message">Delete this form? This cannot be undone.</p>
+        <div class="dialog__actions">
+          <button class="dialog__btn dialog__btn--secondary" type="button" (click)="cancelDelete()">
+            Cancel
+          </button>
+          <button class="dialog__btn dialog__btn--danger" type="button" (click)="confirmDelete()">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

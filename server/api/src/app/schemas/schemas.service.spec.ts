@@ -58,27 +58,43 @@ describe('SchemasService', () => {
 
   // ── findAll ───────────────────────────────────────────────────────────────
   describe('findAll', () => {
-    it('returns paginated schemas', async () => {
+    it('returns paginated schemas for regular user (filters by ownerId)', async () => {
       db.query.schemas.findMany.mockResolvedValue([mockSchema]);
-      const result = await service.findAll(1, 20);
+      const result = await service.findAll(1, 20, OWNER_ID, 'user');
       expect(result).toEqual([mockSchema]);
       expect(db.query.schemas.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ limit: 20, offset: 0 }),
+        expect.objectContaining({ limit: 20, offset: 0, where: expect.anything() }),
       );
     });
 
     it('calculates correct offset for page 2', async () => {
       db.query.schemas.findMany.mockResolvedValue([]);
-      await service.findAll(2, 10);
+      await service.findAll(2, 10, OWNER_ID, 'user');
       expect(db.query.schemas.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ limit: 10, offset: 10 }),
+      );
+    });
+
+    it('superuser receives all schemas with owner relation', async () => {
+      db.query.schemas.findMany.mockResolvedValue([mockSchema]);
+      await service.findAll(1, 20, 'any-id', 'superuser');
+      expect(db.query.schemas.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ with: expect.objectContaining({ owner: expect.anything() }) }),
+      );
+    });
+
+    it('regular user query includes where clause to filter by owner', async () => {
+      db.query.schemas.findMany.mockResolvedValue([]);
+      await service.findAll(1, 20, OWNER_ID, 'user');
+      expect(db.query.schemas.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expect.anything() }),
       );
     });
   });
 
   // ── findOne ───────────────────────────────────────────────────────────────
   describe('findOne', () => {
-    it('returns the schema when found', async () => {
+    it('returns the schema when found (no auth check)', async () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
       const result = await service.findOne(SCHEMA_ID);
       expect(result).toEqual(mockSchema);
@@ -87,6 +103,21 @@ describe('SchemasService', () => {
     it('throws NotFoundException when not found', async () => {
       db.query.schemas.findFirst.mockResolvedValue(null);
       await expect(service.findOne('no-such-id')).rejects.toThrow(NotFoundException);
+    });
+
+    it('throws ForbiddenException when non-superuser requests another owners schema', async () => {
+      db.query.schemas.findFirst.mockResolvedValue(mockSchema); // ownerId = OWNER_ID
+      await expect(service.findOne(SCHEMA_ID, OTHER_ID, 'user')).rejects.toThrow(ForbiddenException);
+    });
+
+    it('superuser can read any schema regardless of owner', async () => {
+      db.query.schemas.findFirst.mockResolvedValue(mockSchema);
+      await expect(service.findOne(SCHEMA_ID, OTHER_ID, 'superuser')).resolves.toEqual(mockSchema);
+    });
+
+    it('owner can read their own schema', async () => {
+      db.query.schemas.findFirst.mockResolvedValue(mockSchema);
+      await expect(service.findOne(SCHEMA_ID, OWNER_ID, 'user')).resolves.toEqual(mockSchema);
     });
   });
 

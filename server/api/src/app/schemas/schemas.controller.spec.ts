@@ -5,7 +5,7 @@ import { SchemasService } from './schemas.service';
 
 const SCHEMA_ID = 'schema-uuid';
 const USER_ID   = 'user-uuid';
-const mockReq   = { user: { userId: USER_ID } };
+const mockReq   = { user: { userId: USER_ID, role: 'user' } };
 
 const mockSchemasService = {
   findAll:      jest.fn(),
@@ -33,16 +33,16 @@ describe('SchemasController', () => {
     jest.clearAllMocks();
   });
 
-  it('findAll passes numeric page and limit to service', () => {
+  it('findAll passes numeric page, limit, userId, and role to service', () => {
     mockSchemasService.findAll.mockResolvedValue([]);
-    controller.findAll(2, 5);
-    expect(mockSchemasService.findAll).toHaveBeenCalledWith(2, 5);
+    controller.findAll(2, 5, mockReq);
+    expect(mockSchemasService.findAll).toHaveBeenCalledWith(2, 5, USER_ID, 'user');
   });
 
-  it('findOne delegates to service', () => {
+  it('findOne delegates to service with userId and role', () => {
     mockSchemasService.findOne.mockResolvedValue({ id: SCHEMA_ID });
-    controller.findOne(SCHEMA_ID);
-    expect(mockSchemasService.findOne).toHaveBeenCalledWith(SCHEMA_ID);
+    controller.findOne(SCHEMA_ID, mockReq);
+    expect(mockSchemasService.findOne).toHaveBeenCalledWith(SCHEMA_ID, USER_ID, 'user');
   });
 
   it('create passes dto and userId to service', () => {

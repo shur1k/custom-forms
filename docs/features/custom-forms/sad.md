@@ -245,22 +245,17 @@ Production runs as **Docker Compose on a single VM** (ADR-0003) — extending th
 
 ## 8. Crosscutting concepts
 
-<!-- 🎯 Навіщо: НАСКРІЗНІ ПАТЕРНИ, які перетинають кілька модулів: логування, помилки,    -->
-<!--           авторизація, ID strategy, outbox, кеш. ⭐ Друга найгустіша секція.          -->
-<!--           Якщо патерн всередині одного модуля — він НЕ сюди. Якщо це конвенція        -->
-<!--           проєкту в цілому — у CLAUDE.md.                                              -->
-<!-- 📋 Що писати: таблиця концепт / конвенція / де визначено. Один рядок на концепт.      -->
-<!-- 📌 Приклад: «UUID v7 (час+випадковий, сортується) у app-layer» — як default з CLAUDE.md. -->
-
 | Concept | Convention | Where defined |
 |---|---|---|
-| Logging | <e.g. structured slog, fields `module=<name>`> | <CLAUDE.md §X or here> |
-| Authentication | <e.g. JWT via session middleware> | <CLAUDE.md §X> |
-| Error handling | <e.g. domain sentinel → ports/errors.go → apperr JSON> | <CLAUDE.md §X> |
-| ID strategy | <e.g. UUID v7 in app layer> | <CLAUDE.md §X> |
-| Internationalisation | <e.g. N/A, English only> | — |
-| Observability | <e.g. OpenTelemetry on HTTP boundaries> | — |
-| Outbox / events | <module-specific patterns, if any> | <here> |
+| Logging | NestJS built-in `Logger` (no structured/JSON logging framework found in brownfield) — continue as-is | server/api default |
+| Authentication | JWT via `@nestjs/jwt` + `passport-jwt`, `bcryptjs` hashing — existing, unchanged | `server/api/src/app/auth/` |
+| Authorization | Per-endpoint `@Roles()` + `RolesGuard` (ADR-0002) | §4 |
+| Error handling | NestJS default `HttpException` JSON shape (`{statusCode, message, error}`) — no custom global filter found in brownfield, none introduced | server/api default |
+| ID strategy | UUID v4, `uuid('...').primaryKey().defaultRandom()` — existing convention, applied to `forms_data` + `templates` too | Drizzle schema |
+| Internationalisation | N/A — English only, no PRD signal for i18n | — |
+| Observability | Gap — no metrics/alerts/tracing in the brownfield (tracked in §7 + §11, not fabricated here) | — |
+| Rate limiting *(new)* | 30 screen-save actions/min/account via `@nestjs/throttler` — PRD §6.1 abuse case (spam screen creation); no throttling exists in the brownfield yet | new, this feature |
+| Config sanitization *(new)* | Text/link component values rendered via Angular's default template binding (`{{ value }}`), never `[innerHTML]`/`bypassSecurityTrust*` — always escaped, never executed as markup (AC-15, XSS abuse case) | new, this feature |
 
 ## 9. Architecture decisions
 

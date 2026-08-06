@@ -6,7 +6,7 @@ updated_at: "2026-08-06"
 feature_size: L
 stage: "04-05"
 ticket: "<TBD>"
-target_surfaces: []  # filled in §4 — subset of: backend-service | web-frontend | mobile-app | desktop-app | cli | worker | library-sdk. Read (never re-derived) by api-forge/complete-sequence-diagrams/break-tasks/plan-tests/review-feature → _shared/surfaces.md
+target_surfaces: [backend-service, web-frontend]  # decided §4 — both already exist in the brownfield (server/api NestJS, client/apps/* Angular federation) and PRD US-04+ requires extending both. Read (never re-derived) by api-forge/complete-sequence-diagrams/break-tasks/plan-tests/review-feature → _shared/surfaces.md
 ---
 
 # Software Architecture Document — custom-forms
@@ -101,28 +101,17 @@ C4Context
 
 ## 4. Solution strategy
 
-<!-- 🎯 Навіщо: 3-4 СТРАТЕГІЧНІ СТОВПИ, з яких потім ростуть усі ADR. Без §4 кожен ADR    -->
-<!--           виглядає випадковим — нема зонтика. ⭐ Найгустіша секція — тут ADR-gate    -->
-<!--           спрацьовує майже завжди (рішення незворотні + мульти-модульні).            -->
-<!-- 📋 Що писати: спершу Target surface(s), потім 3-4 стратегічні вибори.                -->
-<!--           На кожен — заголовок + 2-3 речення rationale.                              -->
-<!-- 📌 ПЕРШЕ рішення §4 — Target surface(s): ЩО САМЕ будуємо. Записується у frontmatter   -->
-<!--           target_surfaces: [...] і гейтить §5 (один контейнер на поверхню) + усі       -->
-<!--           наступні стадії. Деривиться з PRD §1 «для кого» + §4 ролей. → _shared/surfaces.md -->
-<!-- 📌 Приклад: «Зберігати урок як таблицю блоків» — стовп, з якого виросло ADR-0001.    -->
+**Target surface(s) (the first decision — what's being built):** `[backend-service, web-frontend]`
 
-**Target surface(s) (the first decision — what's being built):** `<e.g. [backend-service, web-frontend]>`
-<!-- Mirror this list into the frontmatter `target_surfaces`. For each declared UI surface          -->
-<!-- (web-frontend / mobile-app / desktop-app) add a UI-architecture choice below (web → SSR/SPA/   -->
-<!-- hybrid; mobile → native/cross-platform). Multi-surface is usually an ADR (multi-module +       -->
-<!-- irreversible). The UI reuses the repo's existing design system / components / tokens from       -->
-<!-- architecture-map.md §Frontend — it does not design greenfield. → _shared/surfaces.md           -->
+Both surfaces already exist in the brownfield (`server/api` NestJS backend; `client/apps/{shell,designer,runtime,user-administration}` Angular federation) and PRD US-04+ requires extending both — this is a continuation, not a fresh multi-surface pick, so it stays inline (no ADR): the "legitimate alternative" blast-radius criterion doesn't fire when the alternative is excluded by an existing, already-shipped architecture.
+
+**UI-architecture (web-frontend):** Continue the existing SPA + `@angular-architects/native-federation` model — shell host + federated remotes, no SSR. custom-forms is an internal tool with no SEO requirement, so there's no product signal to justify introducing a second rendering paradigm. Inline, no ADR (same reasoning as the surface pick — this extends, not replaces, the established architecture).
 
 **Top strategic choices (the seeds for ADRs):**
 
-1. **<e.g. Module isolation through events>** — <2-3 sentences rationale referencing Quality Goals and constraints>.
-2. **<e.g. Single-store persistence (Postgres)>** — <2-3 sentences>.
-3. **<e.g. UI-architecture: SPA consuming the backend API>** — <per declared UI surface; 2-3 sentences>.
+1. **Dedicated `forms_data` + `templates` tables** (→ ADR-0001) — forms data (AC-17: one row per User per form, upsert not history) and templates (AC-24: independent copy, no ongoing link to source) are new entities absent from the brownfield's `schemas` / `schemas_versions` tables. Two new tables keep each entity's invariants as native constraints instead of overloading tables whose existing semantics mean something else.
+2. **Per-endpoint `@Roles()` + the existing `RolesGuard`** (→ ADR-0002) — the brownfield already implements `RolesGuard`/`@Roles()` under `server/api/src/app/users/` but never applies it to `/schemas`; PRD's new authz requirements (AC-05, AC-06) need it applied across `schemas`/`forms-data`/`templates`/`users` controllers. Runtime endpoints stay guard-open to all three roles and rely on `userId`-scoping instead (AC-20 is identity-scoping, not role-gating).
+3. **UI-architecture: SPA consuming the backend API, unchanged from the brownfield** — see above; inline, no ADR.
 
 Each tactical decision in later sections should be traceable to one of these strategic seeds. Tactical decisions that *contradict* a strategic choice are red flags — surface them in §11 Risks.
 

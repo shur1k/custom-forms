@@ -44,29 +44,30 @@ target_surfaces: []  # filled in §4 — subset of: backend-service | web-fronte
 
 ## 2. Constraints
 
-<!-- 🎯 Навіщо: §4 (стратегія) працює тільки коли §2 зафіксувала, ЩО ВЖЕ ЗАФІКСОВАНО:    -->
-<!--           стек, версії, дедлайн, регуляторні вимоги. Це вхід, не вихід.             -->
-<!-- 📋 Що писати: чотири блоки — Технічні / Організаційні / Конвенції / Регуляторні.     -->
-<!-- 📌 Приклад: «Postgres 18» (не «Postgres»); «дедлайн Q3 — жорсткий» (не «бажано»).    -->
-
 **Technical.**
-- <Language + version, e.g. Go 1.26>
-- <Framework + version, e.g. chi v5.1, pgx v5.7>
-- <Datastore + version, e.g. Postgres 18>
-- <Architecture convention, e.g. hexagonal per CLAUDE.md>
+- Angular 21 (zoneless, Signals) + NX 22.6.1 monorepo
+- `@angular-architects/native-federation` (esbuild-based Module Federation, NOT Webpack) — shell host (port 4200) + federated remotes: designer (4201), runtime (4202), user-administration (4203)
+- NestJS 11 backend (`server/api`), Express platform
+- Drizzle ORM 0.40 + PostgreSQL (`postgres` driver), JSONB columns for schema storage
+- Auth: `@nestjs/jwt` + `passport-jwt`; `bcryptjs` (12 rounds) for password hashing
+- `@nestjs/swagger` — OpenAPI docs at `/api/docs`
 
 **Organisational.**
-- <Effort budget, e.g. 3 person-weeks>
-- <Deadline, e.g. 2026-Q3 hard>
-- <Team composition, e.g. 1 backend + 0.5 frontend>
+- Feature size **L** (`.size`) — full 12-section SAD, 10-15 ADRs expected
+- Hard build-sequence constraint (PRD §1): US-01/02/03 (auth + role administration) ship before US-04+ (Designer/Runtime capabilities)
+- No deadline / effort budget stated in PRD → `<TBD by PM>` (see §11 Risks)
 
 **Conventions.**
-- <Link to CLAUDE.md or project conventions>
-- <Naming, ID strategy, error-handling pattern>
+- No repo-level `CLAUDE.md` — conventions below are inferred from the existing (brownfield) code at commit `0a09af4`, not an authored standard
+- Backend: one NestJS module per domain (`app/{auth,schemas,users,drizzle}`), each with `.controller.ts` / `.service.ts` / `.module.ts` / `dto/`; services inject `DRIZZLE_DB` and use Drizzle relational queries
+- Frontend: NX apps = shell (host) + federated remotes; shared libs (`http`, `auth`, `ui`, `api-client`); standalone Angular components + signals
+- ID strategy: UUID v4 (`uuid('...').primaryKey().defaultRandom()`)
+- DTO naming: `{Action}{Entity}Dto`
 
 **Regulatory / external.**
-- <e.g. GDPR — user deletion behavior per ADR-NNNN>
-- <e.g. SOC2, PCI — applicable controls>
+- PRD §6.1: Security review **Required** — new authz boundary (3 roles), new forms-data isolation guarantee, unresolved personal-data-field question
+- Data classification: internal
+- Named abuse cases to defend: config injection (XSS), draft leak, cross-User forms-data leak, component-library tampering, spam screen creation (rate-limit 30 saves/min/account)
 
 ## 3. Context and scope
 

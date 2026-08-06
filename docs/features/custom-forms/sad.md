@@ -233,24 +233,15 @@ sequenceDiagram
 
 ## 7. Deployment view
 
-<!-- 🎯 Навіщо: ТОПОЛОГІЯ, яку DevOps має знати без читання Helm-чартів — скільки реплік,  -->
-<!--           де живе фоновий обробник, ПРИ ЯКИХ ЧИСЛАХ масштабуємось.                     -->
-<!-- 📋 Що писати: 2-3 речення про топологію + метрики + алерти + конкретні числа-пороги.   -->
-<!-- 📌 Приклад: «500 IC → партиціонування за кварталом» (не «при зростанні подумаємо»).    -->
-<!-- 🎯 Можна N/A для XS/S функцій, що переюзають існуюче розгортання без змін.            -->
-
-<Topology in 2-3 sentences. Where it runs (k8s / VM / serverless), replicas, scaling thresholds.>
+Production runs as **Docker Compose on a single VM** (ADR-0003) — extending the existing `docker-compose.dev.yml` pattern (currently dev-only, Postgres alone) into a prod compose file: one Postgres 16 container, one NestJS API container, one Nginx container serving the 4 Angular apps' production builds and reverse-proxying `/api` to the NestJS container. No replicas, no orchestration platform — proportionate to a 99.0% monthly SLO and ≥5 req/s throughput target for an internal MVP tool.
 
 **Monitoring:**
-- <Metrics — e.g. Prometheus `<metric_name>`>
-- <Alerts — e.g. "outbox lag > 10 min → page on-call">
-- <Tracing — e.g. OpenTelemetry HTTP spans>
+- No observability stack (metrics/alerts/tracing) exists in the brownfield — this is a gap, not a claim; tracked in §11 Risks rather than fabricated here.
 
-**Scaling thresholds:**
-- <e.g. 500 IC × 5 goals × 26 checkpoints/Q = 65k rows/year — comfortable in one table>
-- <e.g. partitioning by quarter at >500k rows/year>
-
-<!-- For XS/S that doesn't change deployment: <!-- N/A: feature reuses existing deployment unit -->. -->
+**Scaling thresholds (from PRD §6 NFR, verbatim):**
+- Throughput ≥5 req/s per instance — smoke test in CI; comfortably met by a single instance.
+- Designer schemas/templates list: renders up to 500 combined schemas+templates without a UI freeze >1s — comfortable in a single Postgres table each, no partitioning needed at this scale.
+- Availability 99.0% monthly SLO (internal MVP tool, business hours) — single VM has no automatic failover; acceptable at this SLO, revisit if the target rises.
 
 ## 8. Crosscutting concepts
 

@@ -117,50 +117,57 @@ Each tactical decision in later sections should be traceable to one of these str
 
 ## 5. Building block view
 
-<!-- 🎯 Навіщо: ВНУТРІШНЯ ДЕКОМПОЗИЦІЯ — модулі, контейнери, БД. Статична топологія:   -->
-<!--           хто з ким може говорити. Без §5 §6 (сценарії) не має словника учасників. -->
-<!-- 📋 Що писати: 1 абзац про стиль (шари/гексагональна/clean/на подіях) +            -->
-<!--           дерево папок + Mermaid C4Container.                                       -->
-<!-- 📌 ОДИН Container на кожну оголошену target_surface (frontmatter): fullstack        -->
-<!--           [backend-service, web-frontend] = backend-API container + web/SPA container; -->
-<!--           [backend-service, mobile-app] = API + mobile app. Container(web, …) нижче — -->
-<!--           лише приклад однієї поверхні; додай/заміни під оголошене у §4. → _shared/surfaces.md -->
-<!-- 📌 Приклад: «web-app, content-api, media-worker, postgres, s3, cdn».                -->
+Backend stays a layered NestJS module-per-domain style (already the brownfield convention — no divergence proposed). Two new modules land alongside the existing three, per ADR-0001's table split: `forms-data` and `templates`. The `schemas` module gains one new cross-module read (into `forms-data`) to enforce AC-10b's field-removal guard — before allowing a field removal, `schemas.service` asks `forms-data.service` whether any submitted row has a value under that field's key.
 
-<One paragraph: layered / hexagonal / clean / event-driven. Why.>
-
-**Internal decomposition:**
-
+**Internal decomposition (backend, `server/api/src/app/`):**
 ```
-<e.g. internal/modules/goals/>
-├── domain/       <entities + sentinel errors>
-├── app/          <use cases / services>
-├── infra/        <repository + outbox impl>
-├── ports/        <HTTP handlers, DTOs, error mapping>
-└── module.go     <self-wiring>
+app/
+├── auth/          <existing — login/register, JWT strategy>
+├── users/         <existing — user CRUD + role assignment, RolesGuard>
+├── schemas/       <existing, extended — + field-removal guard (AC-10b) reads forms-data>
+├── forms-data/    <NEW (ADR-0001) — per-User submitted values, upsert-on-resubmit (AC-17)>
+├── templates/     <NEW (ADR-0001) — named independent schema copies (AC-21/AC-24)>
+└── drizzle/       <existing — DB module>
+```
+
+**Internal decomposition (frontend, `client/apps/`):**
+```
+designer/src/app/
+├── form-list/            <existing, extended — also lists templates (AC-11)>
+├── form-editor/          <existing — canvas/palette/properties-panel>
+├── schema-viewer/        <existing>
+└── template-actions/     <NEW — save-as-template, create-from-template>
+
+runtime/src/app/          <currently empty routes — filled this iteration>
+├── form-list/            <NEW — AC-30 temporary discovery list of published forms>
+└── form-viewer/          <NEW — render, fill, prefill own data, delete own data>
 ```
 
 **C4 Container (L2):**
 
 ```mermaid
 C4Container
-    title <system> — Containers
+    title custom-forms — Containers
 
-    Person(user, "<User>")
+    Person(admin, "Admin")
+    Person(creator, "Creator")
+    Person(user, "User")
 
-    Container_Boundary(boundary, "<Our System>") {
-        Container(web, "<Web/API container>", "<technology>", "<purpose>")
-        Container(svc, "<Service container>", "<technology>", "<purpose>")
-        ContainerDb(db, "<DB>", "<technology>", "<purpose>")
+    Container_Boundary(app, "Custom-forms") {
+        Container(web, "Web frontend", "Angular 21 SPA, native-federation (shell + designer/runtime/user-administration remotes)", "Designer build/publish UI, Runtime fill/revisit UI, user administration UI")
+        Container(api, "Backend API", "NestJS 11", "REST API — auth, schemas, forms-data, templates, users")
     }
 
-    System_Ext(ext, "<External>", "<purpose>")
+    ContainerDb(db, "PostgreSQL", "Drizzle ORM 0.40", "roles, users, schemas, schemas_types, schemas_versions, forms_data, templates")
 
-    Rel(user, web, "<interaction>", "<protocol>")
-    Rel(web, svc, "<service calls>")
-    Rel(svc, db, "<reads/writes>", "<driver>")
-    Rel(svc, ext, "<emits>", "<protocol>")
+    Rel(admin, web, "Manages users/roles, uses Designer", "HTTPS")
+    Rel(creator, web, "Builds/publishes forms", "HTTPS")
+    Rel(user, web, "Fills/revisits forms", "HTTPS")
+    Rel(web, api, "calls", "JSON/HTTPS")
+    Rel(api, db, "reads/writes", "Drizzle/postgres")
 ```
+
+The 4 federated frontend apps (shell/designer/runtime/user-administration) are shown as one `web` container since they're one declared `web-frontend` surface at this zoom level — the federation split is pre-existing deployment infrastructure, not new architecture this feature introduces.
 
 ## 6. Runtime view
 

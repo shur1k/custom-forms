@@ -171,35 +171,65 @@ The 4 federated frontend apps (shell/designer/runtime/user-administration) are s
 
 ## 6. Runtime view
 
-<!-- 🎯 Навіщо: ПОТІК У RUNTIME для 1-2 критичних сценаріїв. Хто з ким коли і у якому     -->
-<!--           порядку говорить. Без §6 §5 — лише купа коробок без життя.                  -->
-<!-- 📋 Що писати: Mermaid sequenceDiagram. Учасники — імена з §5 (не вигадуй нові!).      -->
-<!--           Повідомлення семантичні («складає чорновик»), БЕЗ HTTP-методів/шляхів —     -->
-<!--           ендпоінт-рівневі sequence-діаграми зʼявляться у stage 06 (api-forge).        -->
-<!-- ⏳ RESERVED FOR SEQUENCES: architecture-design сіє лише primary flow(s) тут.          -->
-<!--           complete-sequence-diagrams (stage 06) ДОПОВНЮЄ §6 кожним критичним flow /    -->
-<!--           кожним §5 AC — без обмеження. Не намагайся покрити все тут.                  -->
-<!-- 📌 Приклад: «methodist → web-app: складає чорновик → web-app → content-api: зберегти». -->
+architecture-design seeds the primary flows below; `complete-sequence-diagrams` (stage 06) then covers every remaining critical flow / §5 AC.
 
-**Critical flow 1: <flow name>**
+**Critical flow 1: Creator assembles and publishes a form**
+
+```mermaid
+sequenceDiagram
+    actor Creator
+    participant Web
+    participant API
+    participant DB
+    Creator->>Web: places components, saves draft
+    Web->>API: create/update schema (draft)
+    API->>DB: write schemas row
+    DB-->>API: ok
+    API-->>Web: schema saved
+    Creator->>Web: submits publish action
+    Web->>API: publish schema
+    API->>DB: validate at least one component (AC-09), write schemas_versions snapshot
+    DB-->>API: ok
+    API-->>Web: published
+    Web-->>Creator: confirmation
+```
+
+**Critical flow 2: User fills, submits, and later returns to a published form**
 
 ```mermaid
 sequenceDiagram
     actor User
+    participant Web
     participant API
-    participant Service
     participant DB
-    User->>API: <request>
-    API->>Service: <call>
-    Service->>DB: <write tx>
-    DB-->>Service: ok
-    Service-->>API: result
-    API-->>User: 201
+    User->>Web: opens published form
+    Web->>API: get form + own forms data
+    API->>DB: read schema, read forms_data where userId = me
+    DB-->>API: schema plus existing values if any
+    API-->>Web: form prefilled or empty
+    User->>Web: fills required fields, submits
+    Web->>API: submit forms data
+    API->>DB: upsert forms_data by schemaId and userId
+    DB-->>API: ok
+    API-->>Web: submission confirmed
 ```
 
-<!-- For XS/S: 1 flow above is enough. For M+: add 2-4 more (e.g. failure-mode flow, async flow). -->
+**Critical flow 3: Runtime shows a visible error placeholder for a broken component (AC-16)**
 
-**Critical flow 2: <e.g. async event propagation>** — <if applicable, otherwise N/A>.
+```mermaid
+sequenceDiagram
+    actor User
+    participant Web
+    participant API
+    User->>Web: opens published form
+    Web->>API: get form config
+    API-->>Web: schema, including a component with a broken data binding
+    alt component renders successfully
+        Web-->>User: shows the rendered field
+    else component raises an error or cannot resolve its bound data
+        Web-->>User: shows a visible error placeholder for that component only
+    end
+```
 
 ## 7. Deployment view
 

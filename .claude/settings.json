@@ -1,5 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [
@@ -66,15 +71,8 @@
   "sandbox": {
     "enabled": true,
     "filesystem": {
-      "denyRead": [
-        "~/.ssh",
-        "~/.aws",
-        "~/.gnupg",
-        "~/.kube/config"
-      ],
-      "allowWrite": [
-        "/tmp/build"
-      ]
+      "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg", "~/.kube/config"],
+      "allowWrite": ["/tmp/build"]
     },
     "network": {
       "allowedDomains": [
@@ -89,9 +87,7 @@
       ],
       "allowManagedDomainsOnly": false
     },
-    "excludedCommands": [
-      "docker"
-    ],
+    "excludedCommands": ["docker"],
     "allowUnsandboxedCommands": true
   },
   "env": {

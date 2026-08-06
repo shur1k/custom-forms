@@ -71,34 +71,32 @@ target_surfaces: []  # filled in §4 — subset of: backend-service | web-fronte
 
 ## 3. Context and scope
 
-<!-- 🎯 Навіщо: малює КОРДОН СИСТЕМИ — хто з нею говорить ззовні, де закінчується зона довіри. -->
-<!--           Без §3 §5 і §8 (авторизація) розпливаються — неясно, що «всередині», а що «зовні». -->
-<!-- 📋 Що писати: 2-3 речення бізнес-контексту + таблиця зовнішніх систем + Mermaid C4Context. -->
-<!-- 📌 Приклад: «зовнішні — нема (свідома відмова від third-party у v1)» — це теж рішення.   -->
-<!-- Кордон довіри (trust boundary) — лінія, за якою ти не довіряєш даним без перевірки.       -->
-
-<Business context in 2-3 sentences. What the system does for whom.>
+Custom-forms is an internal no-code tool: a Creator (or Admin) assembles a form screen from a curated component library in Designer and publishes it; a User then fills that published form in Runtime and sees their own previously-submitted values on return. Admin additionally governs who holds which role. The system is self-contained — PRD §3 explicitly puts external-system integrations and workflow automation out of scope for this iteration, and the existing auth is homegrown (JWT/passport), not an external Identity Provider.
 
 **External systems (in / out):**
 
 | Actor or system | Type | Interaction |
 |---|---|---|
-| <e.g. IC> | Person | Creates goals, adds checkpoints |
-| <e.g. notification-service> | System (internal) | Receives cron registration |
-| <e.g. Identity Provider> | System (external) | Provides JWT tokens |
+| Admin | Person | Manages user accounts/roles, uses Designer |
+| Creator | Person | Assembles/publishes forms + templates in Designer |
+| User | Person | Fills/revisits own forms data in Runtime |
+| *(none)* | — | No external systems this iteration — deliberate (PRD §3 non-goal: workflow automation / external integrations out of scope; auth is self-hosted JWT, not an external IdP) |
 
 **C4 Context (L1):**
 
 ```mermaid
 C4Context
-    title <system> — System Context
+    title custom-forms — System Context
 
-    Person(user, "<User>", "<role + intent>")
-    System(system, "<Our System>", "<one-sentence description>")
-    System_Ext(ext, "<External system>", "<one-sentence description>")
+    Person(admin, "Admin", "governs Designer access + user roles")
+    Person(creator, "Creator", "assembles + publishes forms in Designer")
+    Person(user, "User", "fills + revisits own forms data in Runtime")
 
-    Rel(user, system, "<interaction>", "<protocol>")
-    Rel(system, ext, "<interaction>", "<protocol>")
+    System(customforms, "Custom-forms", "No-code form builder: Designer (build/publish) + Runtime (fill/revisit)")
+
+    Rel(admin, customforms, "Manages users/roles, uses Designer", "HTTPS")
+    Rel(creator, customforms, "Builds/publishes forms in Designer", "HTTPS")
+    Rel(user, customforms, "Fills/revisits own forms data in Runtime", "HTTPS")
 ```
 
 ## 4. Solution strategy

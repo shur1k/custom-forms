@@ -21,26 +21,23 @@ target_surfaces: []  # filled in §4 — subset of: backend-service | web-fronte
 
 ## 1. Introduction and goals
 
-<!-- 🎯 Навіщо: стабільна памʼять про «що + три головні якості + хто зацікавлений».     -->
-<!--           Через рік ніхто не згадає на словах, ЯКІ ТРИ ЯКОСТІ для системи критичні. -->
-<!-- 📋 Що писати: 1 абзац intent + 3 рядки топ-3 якості + таблиця stakeholders.        -->
-<!-- 📌 Приклад: «QG-1: швидкість редагування блоку p95 ≤500 мс»                         -->
-
-**Intent.** <One paragraph from PRD §Goals — what we're building and for whom.>
+**Intent.** Custom-forms is the first step toward a broader no-code application-building platform. A Creator (technical, implementation-facing consultant) assembles a working form screen from a curated component library without writing code — removing the developer-queue bottleneck on screen delivery. A User fills in a Creator-published form and sees their own previously-entered values when they return. Access is governed by three roles — Admin, Creator, User — from day one.
 
 **Top-3 quality goals (1-liners; full scenarios in §10):**
 
-1. <e.g. "Availability under partial failure of downstream module">
-2. <e.g. "Performance for EM dashboard under team-scale growth">
-3. <e.g. "Recoverability of checkpoints with <30 min RTO">
+1. Rendering correctness under component-library evolution — Runtime never renders a published form blank or silently broken, even after the curated component library changes.
+2. Authorization & data-isolation integrity — the three-role access boundary and per-User forms-data isolation hold under every access path.
+3. Responsiveness — Designer save and Runtime render stay within their p95 latency targets.
 
 **Stakeholders.**
 
 | Role | Interest | Sign-off owner? |
 |---|---|---|
-| <e.g. IC> | <feature usage> | No |
-| <e.g. EM> | <dashboard reads> | No |
-| <e.g. Tech Lead> | <SAD approval> | Yes |
+| Admin | Governs Designer access + user roles | No |
+| Creator | Assembles/publishes forms, manages schemas/templates | No |
+| User | Fills published forms, owns their own submitted data | No |
+| Tech Lead | SAD approval | Yes |
+| Security Lead | Reviews the new authz boundary + data-isolation guarantee | Yes |
 
 <!-- Decision overrides (¶4) — populated by the Step-7 critic resolution loop, empty otherwise.       -->
 <!-- Each: «Decision override: <headline> — rationale: <reason>» so downstream skills see the choice.  -->

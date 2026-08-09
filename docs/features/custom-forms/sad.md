@@ -259,17 +259,14 @@ Production runs as **Docker Compose on a single VM** (ADR-0003) — extending th
 
 ## 9. Architecture decisions
 
-<!-- 🎯 Навіщо: ЗВОРОТНИЙ ІНДЕКС на папку adr/. `ls adr/` дає файли, §9 дає семантику —    -->
-<!--           чому вони існують, до якого зрізу SAD привʼязані, у якому статусі.           -->
-<!-- 📋 Що писати: таблиця з 4 колонками. Один рядок на ADR. Mixed status — це OK.         -->
-<!-- 📌 Приклад: «0001 | Зберігати урок як таблицю блоків | Accepted | §4».                -->
-
 | # | Title | Status | Section |
 |---|---|---|---|
-| <NNNN> | <imperative — e.g. "Use sliding window for rate limiting"> | Accepted | §<N> |
-| <NNNN> | <imperative — e.g. "Co-locate outbox worker in API process"> | Accepted | §<N> |
+| 0001 | Store forms data and templates as two dedicated tables | Accepted | §4 |
+| 0002 | Enforce the three-role model with a per-endpoint @Roles() + RolesGuard | Accepted | §4 |
+| 0003 | Deploy production as Docker Compose on a single VM | Accepted | §7 |
+| 0004 | Run custom-forms as a single shared instance with per-User data isolation, no organizational multi-tenancy | Accepted | §4 |
 
-ADR files live under `docs/features/<slug>/adr/NNNN-<title>.md`.
+ADR files live under `docs/features/custom-forms/adr/NNNN-<title>.md`.
 
 ## 10. Quality requirements
 

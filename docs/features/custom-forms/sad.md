@@ -53,7 +53,7 @@ target_surfaces: [backend-service, web-frontend]  # decided §4 — both already
 - `@nestjs/swagger` — OpenAPI docs at `/api/docs`
 
 **Organisational.**
-- Feature size **L** (`.size`) — full 12-section SAD, 10-15 ADRs expected
+- Feature size **L** (`.size`) — full 12-section SAD. 4 ADRs this pass (rather than the 10-15 typical for a greenfield L feature): most strategic choices (SPA/native-federation, NestJS module-per-domain layering) were already established in the brownfield with no honest alternative left to weigh, so the blast-radius gate fired less often than it would on a from-scratch L feature.
 - Hard build-sequence constraint (PRD §1): US-01/02/03 (auth + role administration) ship before US-04+ (Designer/Runtime capabilities)
 - No deadline / effort budget stated in PRD → `<TBD by PM>` (see §11 Risks)
 

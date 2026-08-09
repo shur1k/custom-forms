@@ -270,29 +270,22 @@ ADR files live under `docs/features/custom-forms/adr/NNNN-<title>.md`.
 
 ## 10. Quality requirements
 
-<!-- 🎯 Навіщо: ДЕРЕВО ЯКОСТЕЙ (Quality Tree) — беремо мету з §1 і розкладаємо на          -->
-<!--           конкретні листя: тести, метрики, конфіги, drill-и. ⭐ Без §10 §1 — це       -->
-<!--           маніфест. З §10 кожна декларація мапиться на щось, ЩО МОЖНА ДОВЕСТИ.        -->
-<!-- 📋 Що писати: на кожну якість з §1 — When / Then / How verify. Числа з PRD §6 NFR     -->
-<!--           ДОСЛІВНО (не округлюй p95 ≤250мс до ≤300мс — це F6-помилка критика).        -->
-<!-- 📌 Приклад: «p95 ≤500 мс на UPDATE блоку, перевіримо k6 load test 100 req/s».        -->
-
 Each top-3 goal from §1 expanded into a full scenario:
 
-**QG-1. <quality attribute>**
-- **When:** <trigger condition>
-- **Then:** <expected behavior with numbers from PRD NFR>
-- **How verify:** <test / chaos drill / load test / observability>
+**QG-1. Rendering correctness under component-library evolution**
+- **When:** a published form's configuration includes a component that fails to render (an uncaught error, or the component cannot resolve its bound data — AC-16's definition).
+- **Then:** the system shows a visible error placeholder for that component instead of a blank screen or uncaught error. NFR target (PRD §6, verbatim): "0 published forms render blank or break silently in Runtime after a curated-library change." KPI target (PRD §7, verbatim): "≥95% of published forms render without a rendering error... tracked over the first 30 days post-release."
+- **How verify:** PRD §6 measurement (verbatim): "manual regression check across all published forms whenever a component in the library changes"; plus an automated test asserting Flow 3's (§6) fallback renders for a mocked broken binding.
 
-**QG-2. <quality attribute>**
-- **When:** <trigger>
-- **Then:** <expected>
-- **How verify:** <how>
+**QG-2. Authorization & data-isolation integrity**
+- **When:** a User attempts to open Designer, a Creator/User attempts a role-restricted action, or two accounts (any roles, including Admin/Creator) have each submitted forms data for the same published form.
+- **Then:** the User is denied Designer access with an explanation (AC-06); the role-restricted action is denied with an explanation (AC-05); each account sees only its own forms data, never another's, even across roles (AC-20).
+- **How verify:** integration tests hitting every `@Roles()`-guarded endpoint (ADR-0002) with every unauthorized role; a cross-account forms-data isolation test asserting account B's read never returns account A's submitted values.
 
-**QG-3. <quality attribute>**
-- **When:** <trigger>
-- **Then:** <expected>
-- **How verify:** <how>
+**QG-3. Responsiveness**
+- **When:** a Designer save action is invoked, or a Runtime screen renders.
+- **Then:** Designer save p95 ≤ 500 ms (PRD §6, verbatim); Runtime screen render p95 ≤ 300 ms (PRD §6, verbatim); throughput ≥ 5 req/s per instance (PRD §6, verbatim).
+- **How verify:** PRD §6 measurement (verbatim): "API response telemetry" for the Designer save p95; "client-side render timing telemetry" for the Runtime p95; "smoke test in CI" for throughput.
 
 ## 11. Risks and technical debt
 

@@ -1,2 +1,9 @@
-.claude/*.local.md
+.claude/*.local.*
 .worktrees/
+
+node_modules/
+dist/
+.env
+.nx/
+*.tsbuildinfo
+.angular/

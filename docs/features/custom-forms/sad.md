@@ -231,6 +231,237 @@ sequenceDiagram
     end
 ```
 
+### Account login (US-01)
+
+```mermaid
+sequenceDiagram
+    actor Account as Admin, Creator, or User
+    participant Web
+    participant API
+    participant DB
+    Account->>Web: submits credentials
+    Web->>API: login request
+    API->>DB: read account by credentials
+    DB-->>API: account record or none
+    alt credentials valid and account not locked
+        API-->>Web: authenticated, role-scoped session
+        Web-->>Account: access granted
+    else credentials invalid or account unknown
+        API-->>Web: generic invalid-credentials error
+        Web-->>Account: generic "invalid credentials" message
+    else 5th failed attempt within 15 minutes
+        API->>DB: persists lockout window for account
+        API-->>Web: generic invalid-credentials error
+        Web-->>Account: same generic message, no lockout disclosed
+    end
+```
+
+### Admin manages user accounts and roles (US-02)
+
+```mermaid
+sequenceDiagram
+    actor Requester as Admin, Creator, or User
+    participant Web
+    participant API
+    participant DB
+    Requester->>Web: creates user account, assigns role
+    Web->>API: create user with role
+    alt requester is Admin
+        API->>DB: persists new user account row with assigned role
+        DB-->>API: ok
+        API-->>Web: account created
+        Web-->>Requester: confirmation
+    else requester is Creator or User
+        API-->>Web: denied, only Admin manages users
+        Web-->>Requester: explanation shown
+    end
+```
+
+### Designer access denied to User role (US-03)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Web
+    participant API
+    User->>Web: opens Designer
+    Web->>API: request Designer access
+    API-->>Web: denied, Designer limited to Admin and Creator roles
+    Web-->>User: explanation shown
+```
+
+### Browse schemas and templates list (US-05)
+
+```mermaid
+sequenceDiagram
+    actor Creator as Creator or Admin
+    participant Web
+    participant API
+    participant DB
+    Creator->>Web: opens schemas/templates browser
+    Web->>API: list schemas and templates
+    API->>DB: read schema and template design metadata only
+    DB-->>API: schema and template rows, entries marked as template or not
+    Note over API,DB: list never includes forms_data rows (AC-12)
+    API-->>Web: combined list
+    Web-->>Creator: list shown
+```
+
+### View a single schema or template (US-06)
+
+```mermaid
+sequenceDiagram
+    actor Creator as Creator or Admin
+    participant Web
+    participant API
+    participant DB
+    Creator->>Web: opens one schema or template from the list
+    Web->>API: get schema or template by id
+    API->>DB: read schema or template row
+    DB-->>API: full field and layout definition
+    API-->>Web: definition
+    Web-->>Creator: shown
+```
+
+### Save a schema as a template (US-08)
+
+```mermaid
+sequenceDiagram
+    actor Creator as Creator or Admin
+    participant Web
+    participant API
+    participant DB
+    Creator->>Web: chooses save-as-template, provides a name
+    Web->>API: create template from schema with name
+    API->>DB: check existing template name, case-insensitive
+    DB-->>API: name available or already used
+    alt name available
+        API->>DB: persists new template row, independent copy
+        DB-->>API: ok
+        API-->>Web: template saved
+        Web-->>Creator: confirmation
+    else name already used
+        API-->>Web: duplicate-name error
+        Web-->>Creator: asks for a different name
+    end
+```
+
+### Create a new form from a template (US-09)
+
+```mermaid
+sequenceDiagram
+    actor Creator as Creator or Admin
+    participant Web
+    participant API
+    participant DB
+    Creator->>Web: chooses a template to start a new form
+    Web->>API: create form from template id
+    API->>DB: read template fields and layout
+    DB-->>API: template definition
+    API->>DB: persists new schema row as an independent copy, draft state
+    DB-->>API: ok
+    Note over API,DB: new form has no ongoing link to the source template (AC-24)
+    API-->>Web: new form pre-filled
+    Web-->>Creator: shown, editable
+```
+
+### Edit a schema or template (US-10)
+
+```mermaid
+sequenceDiagram
+    actor Creator as Creator or Admin
+    participant Web
+    participant API
+    participant DB
+    Creator->>Web: edits an existing schema or template, submits changes
+    Web->>API: update schema or template
+    alt edit removes a field from a published form
+        API->>DB: check forms_data for values under the removed field's key
+        DB-->>API: data exists under that field
+        API-->>Web: blocked, field removal denied
+        Web-->>Creator: explanation shown
+    else edit only adds fields, or removed field has no recorded data
+        API->>DB: persists updated schema or template row
+        DB-->>API: ok
+        API-->>Web: changes saved
+        Web-->>Creator: confirmation
+    end
+```
+
+### Delete a schema or template (US-10)
+
+```mermaid
+sequenceDiagram
+    actor Creator as Creator or Admin
+    participant Web
+    participant API
+    participant DB
+    Creator->>Web: chooses to delete a schema or template
+    Web->>API: delete schema or template by id
+    alt target is a template
+        API->>DB: removes template row
+        DB-->>API: ok
+        API-->>Web: deleted
+        Web-->>Creator: confirmation
+    else target is a form schema with forms data recorded
+        API->>DB: check forms_data for this schema
+        DB-->>API: data exists
+        API-->>Web: blocked, form's data must be removed first
+        Web-->>Creator: explanation shown
+    else target is a form schema with no forms data recorded
+        API->>DB: removes schema row
+        DB-->>API: ok
+        API-->>Web: deleted
+        Web-->>Creator: confirmation
+    end
+```
+
+### Runtime blocks access to an unpublished form (US-07, AC-14)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Web
+    participant API
+    User->>Web: attempts to open a form not yet published
+    Web->>API: get form by id
+    API-->>Web: form not found or not published
+    Web-->>User: form not shown
+```
+
+### User deletes own forms data (US-07, AC-29)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Web
+    participant API
+    participant DB
+    User->>Web: chooses to delete own forms data for a form
+    Web->>API: delete forms data for schemaId and userId
+    API->>DB: removes forms_data row scoped to userId
+    DB-->>API: ok
+    API-->>Web: deletion confirmed
+    Web-->>User: form reverts to its empty state
+```
+
+### User discovers published forms (US-07, AC-30)
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Web
+    participant API
+    participant DB
+    User->>Web: opens published-forms discovery list
+    Web->>API: list published forms available to this account
+    API->>DB: read schemas that are published
+    DB-->>API: published forms metadata
+    API-->>Web: list
+    Web-->>User: shown
+    Note over Web: temporary stopgap, retired once page routing ships (§11)
+```
+
 ## 7. Deployment view
 
 Production runs as **Docker Compose on a single VM** (ADR-0003) — extending the existing `docker-compose.dev.yml` pattern (currently dev-only, Postgres alone) into a prod compose file: one Postgres 16 container, one NestJS API container, one Nginx container serving the 4 Angular apps' production builds and reverse-proxying `/api` to the NestJS container. No replicas, no orchestration platform — proportionate to a 99.0% monthly SLO and ≥5 req/s throughput target for an internal MVP tool.

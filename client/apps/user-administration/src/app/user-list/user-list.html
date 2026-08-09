@@ -1,0 +1,17 @@
+<div class="user-list">
+  <h1 class="user-list__title">User Administration</h1>
+  @if (isPatching()) {
+    <div class="user-list__spinner-overlay">
+      <div class="user-list__spinner"></div>
+    </div>
+  }
+  <ag-grid-angular
+    class="ag-theme-alpine user-list__grid"
+    [rowData]="rowData()"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [getRowId]="getRowId"
+    (gridReady)="onGridReady($event)"
+    (cellValueChanged)="onCellValueChanged($event)"
+  />
+</div>

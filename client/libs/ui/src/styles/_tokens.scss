@@ -1,0 +1,248 @@
+// =============================================================================
+// Design Tokens — Custom Forms (cf)
+// Import once at the app root (styles.scss).
+// All tokens are prefixed with --cf- to avoid collisions with third-party libs.
+// =============================================================================
+
+:root {
+  // ---------------------------------------------------------------------------
+  // Color — Palette
+  // ---------------------------------------------------------------------------
+
+  // Blue (primary brand)
+  --cf-color-blue-50:  #eff6ff;
+  --cf-color-blue-100: #dbeafe;
+  --cf-color-blue-200: #bfdbfe;
+  --cf-color-blue-300: #93c5fd;
+  --cf-color-blue-400: #60a5fa;
+  --cf-color-blue-500: #3b82f6;
+  --cf-color-blue-600: #2563eb;
+  --cf-color-blue-700: #1d4ed8;
+  --cf-color-blue-800: #1e40af;
+  --cf-color-blue-900: #1e3a8a;
+  --cf-color-blue-950: #172554;
+
+  // Gray (neutral)
+  --cf-color-gray-50:  #f9fafb;
+  --cf-color-gray-100: #f3f4f6;
+  --cf-color-gray-200: #e5e7eb;
+  --cf-color-gray-300: #d1d5db;
+  --cf-color-gray-400: #9ca3af;
+  --cf-color-gray-500: #6b7280;
+  --cf-color-gray-600: #4b5563;
+  --cf-color-gray-700: #374151;
+  --cf-color-gray-800: #1f2937;
+  --cf-color-gray-900: #111827;
+  --cf-color-gray-950: #030712;
+
+  // Green (success)
+  --cf-color-green-50:  #f0fdf4;
+  --cf-color-green-100: #dcfce7;
+  --cf-color-green-500: #22c55e;
+  --cf-color-green-600: #16a34a;
+  --cf-color-green-700: #15803d;
+
+  // Red (danger / error)
+  --cf-color-red-50:  #fef2f2;
+  --cf-color-red-100: #fee2e2;
+  --cf-color-red-500: #ef4444;
+  --cf-color-red-600: #dc2626;
+  --cf-color-red-700: #b91c1c;
+
+  // Yellow (warning)
+  --cf-color-yellow-50:  #fefce8;
+  --cf-color-yellow-100: #fef9c3;
+  --cf-color-yellow-500: #eab308;
+  --cf-color-yellow-600: #ca8a04;
+
+  // White / Black
+  --cf-color-white: #ffffff;
+  --cf-color-black: #000000;
+
+  // ---------------------------------------------------------------------------
+  // Color — Semantic aliases
+  // ---------------------------------------------------------------------------
+
+  // Brand
+  --cf-color-primary:        var(--cf-color-blue-500);
+  --cf-color-primary-hover:  var(--cf-color-blue-600);
+  --cf-color-primary-active: var(--cf-color-blue-700);
+  --cf-color-primary-subtle: var(--cf-color-blue-50);
+  --cf-color-primary-text:   var(--cf-color-white);
+
+  // Secondary / neutral action
+  --cf-color-secondary:        var(--cf-color-gray-200);
+  --cf-color-secondary-hover:  var(--cf-color-gray-300);
+  --cf-color-secondary-active: var(--cf-color-gray-400);
+  --cf-color-secondary-text:   var(--cf-color-gray-900);
+
+  // Status
+  --cf-color-success:      var(--cf-color-green-500);
+  --cf-color-success-text: var(--cf-color-green-700);
+  --cf-color-success-bg:   var(--cf-color-green-50);
+
+  --cf-color-danger:       var(--cf-color-red-500);
+  --cf-color-danger-hover: var(--cf-color-red-600);
+  --cf-color-danger-text:  var(--cf-color-red-700);
+  --cf-color-danger-bg:    var(--cf-color-red-50);
+
+  --cf-color-warning:      var(--cf-color-yellow-500);
+  --cf-color-warning-text: var(--cf-color-yellow-600);
+  --cf-color-warning-bg:   var(--cf-color-yellow-50);
+
+  // Surface / background
+  --cf-color-bg:           var(--cf-color-white);
+  --cf-color-bg-subtle:    var(--cf-color-gray-50);
+  --cf-color-bg-muted:     var(--cf-color-gray-100);
+  --cf-color-bg-disabled:  var(--cf-color-gray-100);
+
+  // Text
+  --cf-color-text:          var(--cf-color-gray-900);
+  --cf-color-text-muted:    var(--cf-color-gray-500);
+  --cf-color-text-disabled: var(--cf-color-gray-400);
+  --cf-color-text-inverse:  var(--cf-color-white);
+
+  // Border
+  --cf-color-border:       var(--cf-color-gray-300);
+  --cf-color-border-focus: var(--cf-color-blue-500);
+  --cf-color-border-error: var(--cf-color-red-500);
+
+  // ---------------------------------------------------------------------------
+  // Spacing — 4px base grid
+  // ---------------------------------------------------------------------------
+
+  --cf-space-px:  1px;
+  --cf-space-0:   0px;
+  --cf-space-0-5: 2px;
+  --cf-space-1:   4px;
+  --cf-space-1-5: 6px;
+  --cf-space-2:   8px;
+  --cf-space-2-5: 10px;
+  --cf-space-3:   12px;
+  --cf-space-3-5: 14px;
+  --cf-space-4:   16px;
+  --cf-space-5:   20px;
+  --cf-space-6:   24px;
+  --cf-space-7:   28px;
+  --cf-space-8:   32px;
+  --cf-space-9:   36px;
+  --cf-space-10:  40px;
+  --cf-space-12:  48px;
+  --cf-space-14:  56px;
+  --cf-space-16:  64px;
+  --cf-space-20:  80px;
+  --cf-space-24:  96px;
+  --cf-space-32:  128px;
+
+  // ---------------------------------------------------------------------------
+  // Border radius
+  // ---------------------------------------------------------------------------
+
+  --cf-radius-none: 0px;
+  --cf-radius-sm:   2px;
+  --cf-radius-md:   4px;
+  --cf-radius-lg:   8px;
+  --cf-radius-xl:   12px;
+  --cf-radius-2xl:  16px;
+  --cf-radius-3xl:  24px;
+  --cf-radius-full: 9999px;
+
+  // ---------------------------------------------------------------------------
+  // Typography
+  // ---------------------------------------------------------------------------
+
+  --cf-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+                  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --cf-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+                  "Liberation Mono", "Courier New", monospace;
+
+  // Font sizes (rem, 16px base)
+  --cf-text-xs:   0.75rem;
+  --cf-text-sm:   0.875rem;
+  --cf-text-base: 1rem;
+  --cf-text-lg:   1.125rem;
+  --cf-text-xl:   1.25rem;
+  --cf-text-2xl:  1.5rem;
+  --cf-text-3xl:  1.875rem;
+  --cf-text-4xl:  2.25rem;
+
+  // Font weights
+  --cf-font-normal:   400;
+  --cf-font-medium:   500;
+  --cf-font-semibold: 600;
+  --cf-font-bold:     700;
+
+  // Line heights
+  --cf-leading-none:    1;
+  --cf-leading-tight:   1.25;
+  --cf-leading-snug:    1.375;
+  --cf-leading-normal:  1.5;
+  --cf-leading-relaxed: 1.625;
+  --cf-leading-loose:   2;
+
+  // Letter spacing
+  --cf-tracking-tighter: -0.05em;
+  --cf-tracking-tight:   -0.025em;
+  --cf-tracking-normal:  0em;
+  --cf-tracking-wide:    0.025em;
+  --cf-tracking-wider:   0.05em;
+
+  // ---------------------------------------------------------------------------
+  // Shadows
+  // ---------------------------------------------------------------------------
+
+  --cf-shadow-none:  none;
+  --cf-shadow-xs:    0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --cf-shadow-sm:    0 1px 3px 0 rgb(0 0 0 / 0.10), 0 1px 2px -1px rgb(0 0 0 / 0.10);
+  --cf-shadow-md:    0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+  --cf-shadow-lg:    0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10);
+  --cf-shadow-xl:    0 20px 25px -5px rgb(0 0 0 / 0.10), 0 8px 10px -6px rgb(0 0 0 / 0.10);
+  --cf-shadow-2xl:   0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --cf-shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+  --cf-shadow-focus:       0 0 0 3px rgb(59 130 246 / 0.40);
+  --cf-shadow-focus-error: 0 0 0 3px rgb(239 68 68 / 0.40);
+
+  // ---------------------------------------------------------------------------
+  // Transitions
+  // ---------------------------------------------------------------------------
+
+  --cf-duration-fast:   100ms;
+  --cf-duration-normal: 200ms;
+  --cf-duration-slow:   300ms;
+
+  --cf-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --cf-ease-in:      cubic-bezier(0.4, 0, 1, 1);
+  --cf-ease-out:     cubic-bezier(0, 0, 0.2, 1);
+  --cf-ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
+
+  --cf-transition-colors:    color var(--cf-duration-normal) var(--cf-ease-default),
+                             background-color var(--cf-duration-normal) var(--cf-ease-default),
+                             border-color var(--cf-duration-normal) var(--cf-ease-default);
+  --cf-transition-opacity:   opacity var(--cf-duration-normal) var(--cf-ease-default);
+  --cf-transition-shadow:    box-shadow var(--cf-duration-normal) var(--cf-ease-default);
+  --cf-transition-transform: transform var(--cf-duration-normal) var(--cf-ease-default);
+  --cf-transition-all:       all var(--cf-duration-normal) var(--cf-ease-default);
+
+  // ---------------------------------------------------------------------------
+  // Z-index scale
+  // ---------------------------------------------------------------------------
+
+  --cf-z-base:     0;
+  --cf-z-raised:   10;
+  --cf-z-dropdown: 100;
+  --cf-z-sticky:   200;
+  --cf-z-overlay:  300;
+  --cf-z-modal:    400;
+  --cf-z-toast:    500;
+  --cf-z-tooltip:  600;
+
+  // ---------------------------------------------------------------------------
+  // Breakpoints (reference only — use in @media, not as var())
+  // --cf-bp-sm:  640px
+  // --cf-bp-md:  768px
+  // --cf-bp-lg:  1024px
+  // --cf-bp-xl:  1280px
+  // --cf-bp-2xl: 1536px
+  // ---------------------------------------------------------------------------
+}

@@ -289,25 +289,21 @@ Each top-3 goal from §1 expanded into a full scenario:
 
 ## 11. Risks and technical debt
 
-<!-- 🎯 Навіщо: ⭐ збирає ВСЕ, що може зламатись — і не лише технічне. Без §11 ризики   -->
-<!--           обговорюються на стендапах і губляться; борг лишається у голові того,    -->
-<!--           хто його прийняв.                                                          -->
-<!-- 📋 Що писати: таблиця ризик/борг — серйозність — мітигація — власник. Технічний    -->
-<!--           борг окремою секцією.                                                      -->
-<!-- 📌 Приклад: «EM не пушить — member не оновлює дані | High | …». Перший ризик —      -->
-<!--           часто продуктовий, не технічний. Це нормально.                            -->
-
-<!-- Severity column literals: Low / Medium / High for regular risks; "Open question" for rows
-     created by Step-7 `Save as Open Question` resolutions (see references/socratic-loop.md). -->
-
 | Risk / debt | Severity | Mitigation | Owner |
 |---|---|---|---|
-| <e.g. Outbox lag may reach hours during downstream outage> | Medium | <Alert >10 min, on-call playbook, retry backoff> | <DevOps> |
-| <e.g. No event schema versioning in v1> | Medium | <ADR-NNNN planned for v2, graceful handling of unknown fields> | <Backend> |
-| Open architectural decision: <decision-headline> | Open question | Resolve before <stage trigger or YYYY-MM-DD>; <inline rationale from Step-7 Save-as-OQ> | <owner> |
+| No deadline/effort budget stated in PRD | Medium | PM sets an explicit target before `/sdlc-break-tasks` | PM |
+| No observability stack (metrics/alerts/tracing) in the brownfield | Medium | Wire up basic HTTP metrics/logging before production rollout | Backend |
+| Single-VM deployment (ADR-0003) has no automatic failover | Medium | Revisit if the availability SLO target rises beyond 99.0% | DevOps |
+| `api-client` codegen lib is empty; regeneration is a manual step — risk of type drift between backend OpenAPI and frontend | Low | Run codegen as part of the build/CI pipeline | Frontend |
+| Open architectural decision: final curated component list for first release | Open question | Resolve before `/sdlc-break-tasks custom-forms`; default now is the 4 named types (Text/Number/Select/Date) | Oleksandr Vorovchenko |
+| Open architectural decision: per-screen access grants beyond the three fixed roles | Open question | Resolve at next iteration scoping; conflicts with current §3 non-goal (role-level only) | Oleksandr Vorovchenko |
+| Open architectural decision: page routing/navigation between multiple screens | Open question | Resolve at roadmap review; AC-30's temporary discovery list retires once this ships | Oleksandr Vorovchenko |
+| Open architectural decision: real behavior for `page`/`dashboard` schema types | Open question | Resolve at roadmap review | Oleksandr Vorovchenko |
 
 **Accepted debt (acceptable in v1, plan to fix later):**
-- <e.g. Goal entity is not versioned (immutable) — OK for v1, may need audit versioning in v2>
+- Component-library-change safety relies solely on AC-16's error-placeholder fallback + a manual regression check — no automated version-pinning or backward-compatibility layer for components this iteration (resolved during the §9 walk, inline, no ADR).
+- Every new backend endpoint must remember to add `@Roles()` manually — no structural/lint guarantee against forgetting it (ADR-0002 negative consequence).
+- All `forms_data` values are classified uniformly as "internal" — no per-field PII tagging or special retention handling this iteration; revisit if a Creator-built form is later confirmed to capture regulated personal data (resolved during the §11 walk, inline, no ADR).
 
 ## 12. Glossary
 

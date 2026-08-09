@@ -307,14 +307,17 @@ Each top-3 goal from §1 expanded into a full scenario:
 
 ## 12. Glossary
 
-<!-- 🎯 Навіщо: ⭐ СЛОВНИК ДОМЕНУ, який припиняє суперечки через рік («checkpoint —      -->
-<!--           weekly чи biweekly? Quarter — календарний чи фіскальний?»).                -->
-<!-- 📋 Що писати: таблиця термін / значення. Бізнес-терміни + технічні вперемішку.       -->
-<!--           Один термін може мати дві мови у заголовку: «Goal (Обʼєктив)».              -->
-<!-- 📌 Приклад: «Lesson | урок усередині курсу, що складається з блоків (text, video)». -->
+Extracted from `CONTEXT.md` §Glossary — all terms below appear in this SAD's body.
 
 | Term | Meaning |
 |---|---|
-| <e.g. Goal> | <quarterly intent in statement form> |
-| <e.g. KR> | <Key Result — measurable target linked to a Goal> |
-| <e.g. Checkpoint> | <bi-weekly progress update on a KR> |
+| Admin | The custom-forms role with full Designer + Runtime access, plus user administration (managing accounts/roles). |
+| Creator | The custom-forms role with full Designer + Runtime access, without user-administration rights. |
+| Designer | The no-code app where a Creator/Admin assembles a form/page from the curated component library, saving the result as config. NOT a visual/graphic UI designer role, and NOT this architecture document (SAD). |
+| forms data | The specific instance of values a given User has entered into a published forms schema (e.g. Alice submitted Name/Email/Phone through Contact Form); stored separately from the forms schema, so a User sees exactly their own data on return. NOT forms schema. |
+| forms schema | A JSON-Schema-based definition of a form/screen's fields and layout, assembled by a Creator in Designer (e.g. Contact Form: Name/Email/Phone on the canvas). NOT forms data — forms data is the actual values a User enters into a published screen; forms schema is the empty form/definition those values land in. |
+| Runtime | The part of the custom-forms system that renders a screen/form from the config saved in Designer, dynamically instantiating Angular components. NOT the generic technical term "runtime" (e.g. Node runtime, browser runtime). |
+| template | A named, reusable copy of a forms schema that a Creator or Admin explicitly saves; creating a new screen from a template pre-fills fields/layout as a starting point, with no ongoing link to the source screen. NOT forms schema — a forms schema belongs to one specific screen; a template is a separate, reusable entity from which many screens can be created. |
+| User | The custom-forms role limited to Runtime only, without access to Designer or administration. NOT the generic term "user" as any person interacting with the system. |
+
+**Follow-up flagged:** "client" surfaced during the §9 multi-tenancy walk meaning "the User role, using Runtime" — not an organizational/business tenant (see ADR-0004). Consider a `sdlc:fix-term` pass if this causes confusion downstream.

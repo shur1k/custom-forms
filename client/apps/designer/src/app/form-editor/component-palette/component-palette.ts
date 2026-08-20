@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { CdkDrag, CdkDragPlaceholder, CdkDropList } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag,
+  CdkDragPlaceholder,
+  CdkDropList,
+} from '@angular/cdk/drag-drop';
 import { ComponentType } from '../../form-schema.types';
 
 interface PaletteItem {
@@ -24,6 +28,12 @@ const BUTTON_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
   <rect x="2" y="8" width="20" height="8" rx="4"/>
 </svg>`;
 
+const TEXT_AREA_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+  <rect x="2" y="4" width="20" height="16" rx="2"/>
+  <line x1="6" y1="9" x2="18" y2="9"/>
+  <line x1="6" y1="13" x2="18" y2="13"/>
+</svg>`;
+
 @Component({
   selector: 'cf-component-palette',
   templateUrl: './component-palette.html',
@@ -35,9 +45,26 @@ export class ComponentPalette {
   private readonly sanitizer = inject(DomSanitizer);
 
   readonly paletteItems: PaletteItem[] = [
-    { type: 'input',  label: 'Input',  icon: this.sanitizer.bypassSecurityTrustHtml(INPUT_ICON) },
-    { type: 'select', label: 'Select', icon: this.sanitizer.bypassSecurityTrustHtml(SELECT_ICON) },
-    { type: 'button', label: 'Button', icon: this.sanitizer.bypassSecurityTrustHtml(BUTTON_ICON) },
+    {
+      type: 'input',
+      label: 'Input',
+      icon: this.sanitizer.bypassSecurityTrustHtml(INPUT_ICON),
+    },
+    {
+      type: 'select',
+      label: 'Select',
+      icon: this.sanitizer.bypassSecurityTrustHtml(SELECT_ICON),
+    },
+    {
+      type: 'button',
+      label: 'Button',
+      icon: this.sanitizer.bypassSecurityTrustHtml(BUTTON_ICON),
+    },
+    {
+      type: 'text-area',
+      label: 'Text Area',
+      icon: this.sanitizer.bypassSecurityTrustHtml(TEXT_AREA_ICON),
+    },
   ];
 
   readonly noReturn = () => false;

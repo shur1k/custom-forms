@@ -28,7 +28,9 @@
     border-radius: var(--cf-radius-md);
     cursor: pointer;
 
-    &:hover { opacity: 0.9; }
+    &:hover {
+      opacity: 0.9;
+    }
   }
 
   &__grid {
@@ -58,7 +60,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .dialog-backdrop {
@@ -81,7 +85,9 @@
   gap: var(--cf-space-4);
   box-shadow: var(--cf-shadow-lg);
 
-  &--sm { min-width: 280px; }
+  &--sm {
+    min-width: 280px;
+  }
 
   &__title {
     margin: 0;
@@ -116,7 +122,9 @@
     background: var(--cf-color-bg);
     color: var(--cf-color-text);
 
-    &:focus { border-color: var(--cf-color-primary); }
+    &:focus {
+      border-color: var(--cf-color-primary);
+    }
   }
 
   &__actions {
@@ -134,30 +142,54 @@
     border: none;
     cursor: pointer;
 
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     &--primary {
       background: var(--cf-color-primary);
       color: #fff;
-      &:hover:not(:disabled) { opacity: 0.9; }
+      &:hover:not(:disabled) {
+        opacity: 0.9;
+      }
     }
 
     &--secondary {
       background: transparent;
       border: 1px solid var(--cf-color-border);
       color: var(--cf-color-text);
-      &:hover { background: var(--cf-color-bg-subtle); }
+      &:hover {
+        background: var(--cf-color-bg-subtle);
+      }
     }
 
     &--danger {
       background: #ef4444;
       color: #fff;
-      &:hover { opacity: 0.9; }
+      &:hover {
+        opacity: 0.9;
+      }
     }
   }
 }
 
-// ag-Grid delete button style
+// ag-Grid edit/delete button style
+:global(.edit-btn) {
+  padding: 2px 8px;
+  margin-right: 4px;
+  font-size: 12px;
+  border: 1px solid #3b82f6;
+  color: #3b82f6;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: #eff6ff;
+  }
+}
+
 :global(.delete-btn) {
   padding: 2px 8px;
   font-size: 12px;
@@ -167,5 +199,7 @@
   border-radius: 4px;
   cursor: pointer;
 
-  &:hover { background: #fef2f2; }
+  &:hover {
+    background: #fef2f2;
+  }
 }

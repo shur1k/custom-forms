@@ -1,8 +1,12 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { provideRouter } from '@angular/router';
+import { AuthStateService } from '@custom-forms/auth';
 
 import { FormList } from './form-list';
 import { SchemaRow } from '../form-schema.types';
@@ -42,7 +46,10 @@ describe('FormList', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => http.verify());
+  afterEach(() => {
+    http.verify();
+    localStorage.removeItem('accessToken');
+  });
 
   it('fetches and displays schemas on init', () => {
     fixture.detectChanges();
@@ -58,7 +65,10 @@ describe('FormList', () => {
     expect(component.showNewDialog()).toBe(true);
   });
 
-  it('creates form via POST then reloads list via GET', () => {
+  it('creates form via POST then navigates to its editor', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
     fixture.detectChanges();
     http.expectOne(API).flush([mockRow]);
 
@@ -70,13 +80,50 @@ describe('FormList', () => {
     const newRow: SchemaRow = { ...mockRow, id: 'schema-2', title: 'New Form' };
     http.expectOne({ method: 'POST', url: API }).flush(newRow);
 
-    // After POST, a GET is issued to reload the full list with relations
-    const updatedList = [newRow, mockRow];
-    http.expectOne({ method: 'GET', url: API }).flush(updatedList);
-
-    expect(component.rowData()).toEqual(updatedList);
+    expect(navigateSpy).toHaveBeenCalledWith(['schema-2'], {
+      relativeTo: expect.anything(),
+    });
     expect(component.showNewDialog()).toBe(false);
     expect(component.isCreating()).toBe(false);
+  });
+
+  it('navigates to the editor when the Edit action is clicked', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    fixture.detectChanges();
+    http.expectOne(API).flush([mockRow]);
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'edit-btn';
+    component.onCellClicked({
+      colDef: { headerName: 'Actions' },
+      event: { target: editBtn },
+      data: mockRow,
+    } as never);
+
+    expect(navigateSpy).toHaveBeenCalledWith(['schema-1'], {
+      relativeTo: expect.anything(),
+    });
+  });
+
+  it('does not navigate when a row is clicked on the Edit or Delete button', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    fixture.detectChanges();
+    http.expectOne(API).flush([mockRow]);
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'edit-btn';
+    document.body.appendChild(editBtn);
+    component.onRowClicked({
+      event: { target: editBtn },
+      data: mockRow,
+    } as never);
+    document.body.removeChild(editBtn);
+
+    expect(navigateSpy).not.toHaveBeenCalled();
   });
 
   it('shows delete confirmation on requestDelete()', () => {
@@ -112,12 +159,15 @@ describe('FormList', () => {
     expect(component.newType()).toBe('form');
   });
 
-  it('isSuperuser returns true for superuser JWT', () => {
-    localStorage.setItem('accessToken', makeSuperuserToken());
+  it('shows an Owner column for a superuser JWT', () => {
+    const authState = TestBed.inject(AuthStateService);
+    authState.setToken(makeSuperuserToken());
+
     fixture.detectChanges();
     http.expectOne(API).flush([]);
 
-    expect(component.isSuperuser()).toBe(true);
-    localStorage.removeItem('accessToken');
+    expect(component.columnDefs().some((c) => c.headerName === 'Owner')).toBe(
+      true,
+    );
   });
 });

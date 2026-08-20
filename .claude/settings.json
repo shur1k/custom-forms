@@ -1,12 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "BASH_DEFAULT_TIMEOUT_MS": "300000",
+    "BASH_MAX_TIMEOUT_MS": "900000",
+    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1"
+  },
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
   },
   "permissions": {
-    "defaultMode": "acceptEdits",
     "allow": [
       "Bash(npm install)",
       "Bash(npm ci)",
@@ -28,6 +32,7 @@
       "Bash(git stash *)",
       "Bash(git branch *)",
       "Bash(git checkout *)",
+      "Bash(grep *)",
       "Bash(make verify*)",
       "Bash(make test)",
       "Bash(make build)",
@@ -66,7 +71,8 @@
       "Edit(.env.*)",
       "Edit(**/.env)",
       "Edit(**/.env.*)"
-    ]
+    ],
+    "defaultMode": "acceptEdits"
   },
   "hooks": {
     "PostToolUse": [
@@ -83,10 +89,7 @@
   },
   "sandbox": {
     "enabled": true,
-    "filesystem": {
-      "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg", "~/.kube/config"],
-      "allowWrite": ["/tmp/build"]
-    },
+    "allowUnsandboxedCommands": true,
     "network": {
       "allowedDomains": [
         "api.anthropic.com",
@@ -100,12 +103,22 @@
       ],
       "allowManagedDomainsOnly": false
     },
-    "excludedCommands": ["docker"],
-    "allowUnsandboxedCommands": true
+    "filesystem": {
+      "allowWrite": [
+        "/tmp/build"
+      ],
+      "denyRead": [
+        "~/.ssh",
+        "~/.aws",
+        "~/.gnupg",
+        "~/.kube/config"
+      ]
+    },
+    "excludedCommands": [
+      "docker"
+    ]
   },
-  "env": {
-    "BASH_DEFAULT_TIMEOUT_MS": "300000",
-    "BASH_MAX_TIMEOUT_MS": "900000",
-    "CLAUDE_CODE_SUBPROCESS_ENV_SCRUB": "1"
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": true
   }
 }

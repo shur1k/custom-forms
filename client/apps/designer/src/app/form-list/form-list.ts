@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { BaseHttpService } from '@custom-forms/http';
 import { AuthStateService } from '@custom-forms/auth';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -30,19 +37,19 @@ const TYPE_OPTIONS = [
   imports: [AgGridAngular],
 })
 export class FormList implements OnInit {
-  private readonly http      = inject(BaseHttpService);
-  private readonly router    = inject(Router);
-  private readonly route     = inject(ActivatedRoute);
+  private readonly http = inject(BaseHttpService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly authState = inject(AuthStateService);
 
   private gridApi!: GridApi<SchemaRow>;
 
-  readonly rowData        = signal<SchemaRow[]>([]);
-  readonly isLoading      = signal(false);
-  readonly showNewDialog  = signal(false);
-  readonly newTitle       = signal('');
-  readonly newType        = signal<'form' | 'page' | 'dashboard'>('form');
-  readonly isCreating     = signal(false);
+  readonly rowData = signal<SchemaRow[]>([]);
+  readonly isLoading = signal(false);
+  readonly showNewDialog = signal(false);
+  readonly newTitle = signal('');
+  readonly newType = signal<'form' | 'page' | 'dashboard'>('form');
+  readonly isCreating = signal(false);
   readonly deleteTargetId = signal<string | null>(null);
 
   readonly typeOptions = TYPE_OPTIONS;
@@ -51,7 +58,13 @@ export class FormList implements OnInit {
     { field: 'title', flex: 2 },
     { headerName: 'Type', valueGetter: (p) => p.data?.type?.name, flex: 1 },
     ...(this.authState.isSuperuser()
-      ? [{ headerName: 'Owner', valueGetter: (p: { data?: SchemaRow }) => p.data?.owner?.email, flex: 1 } as ColDef<SchemaRow>]
+      ? [
+          {
+            headerName: 'Owner',
+            valueGetter: (p: { data?: SchemaRow }) => p.data?.owner?.email,
+            flex: 1,
+          } as ColDef<SchemaRow>,
+        ]
       : []),
     { field: 'createdAt', flex: 1 },
     {
@@ -59,7 +72,8 @@ export class FormList implements OnInit {
       flex: 1,
       sortable: false,
       filter: false,
-      cellRenderer: () => '<button class="delete-btn">Delete</button>',
+      cellRenderer: () =>
+        '<button class="edit-btn">Edit</button><button class="delete-btn">Delete</button>',
     },
   ]);
 
@@ -70,7 +84,10 @@ export class FormList implements OnInit {
   ngOnInit(): void {
     this.isLoading.set(true);
     this.http.get<SchemaRow[]>('/schemas').subscribe({
-      next: (rows) => { this.rowData.set(rows); this.isLoading.set(false); },
+      next: (rows) => {
+        this.rowData.set(rows);
+        this.isLoading.set(false);
+      },
       error: () => this.isLoading.set(false),
     });
   }
@@ -80,17 +97,23 @@ export class FormList implements OnInit {
   }
 
   onRowClicked(event: RowClickedEvent<SchemaRow>): void {
-    if ((event.event?.target as HTMLElement)?.closest('.delete-btn')) return;
-    this.router.navigate([event.data!.id], { relativeTo: this.route });
+    const target = event.event?.target as HTMLElement;
+    if (target?.closest('.delete-btn') || target?.closest('.edit-btn')) return;
+    this.openEditor(event.data!.id);
   }
 
   onCellClicked(event: CellClickedEvent<SchemaRow>): void {
-    if (
-      event.colDef.headerName === 'Actions' &&
-      (event.event?.target as HTMLElement)?.classList.contains('delete-btn')
-    ) {
+    if (event.colDef.headerName !== 'Actions') return;
+    const target = event.event?.target as HTMLElement;
+    if (target?.classList.contains('delete-btn')) {
       this.requestDelete(event.data!.id);
+    } else if (target?.classList.contains('edit-btn')) {
+      this.openEditor(event.data!.id);
     }
+  }
+
+  private openEditor(id: string): void {
+    this.router.navigate([id], { relativeTo: this.route });
   }
 
   openNewDialog(): void {
@@ -106,14 +129,19 @@ export class FormList implements OnInit {
   confirmCreate(): void {
     if (!this.newTitle().trim()) return;
     this.isCreating.set(true);
-    this.http.post<SchemaRow>('/schemas', { title: this.newTitle().trim(), type: this.newType() }).subscribe({
-      next: (row) => {
-        this.rowData.update((rows) => [...rows, row]);
-        this.isCreating.set(false);
-        this.cancelDialog();
-      },
-      error: () => this.isCreating.set(false),
-    });
+    this.http
+      .post<SchemaRow>('/schemas', {
+        title: this.newTitle().trim(),
+        type: this.newType(),
+      })
+      .subscribe({
+        next: (row) => {
+          this.isCreating.set(false);
+          this.cancelDialog();
+          this.openEditor(row.id);
+        },
+        error: () => this.isCreating.set(false),
+      });
   }
 
   requestDelete(id: string): void {

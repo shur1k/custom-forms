@@ -26,7 +26,13 @@
     "fe:build:runtime": "nx build runtime --configuration=production",
     "fe:build:user-admin": "nx build user-administration --configuration=production",
     "fe:storybook": "nx run ui:storybook",
-    "fe:storybook:build": "nx run ui:build-storybook"
+    "fe:storybook:build": "nx run ui:build-storybook",
+    "fe:test": "nx run-many --target=test --projects=ui,shell,designer,runtime,user-administration --parallel=4",
+    "fe:test:ui": "nx test ui",
+    "fe:test:shell": "nx test shell",
+    "fe:test:designer": "nx test designer",
+    "fe:test:runtime": "nx test runtime",
+    "fe:test:user-admin": "nx test user-administration"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "~2.1.2",

@@ -75,6 +75,26 @@
     "defaultMode": "acceptEdits"
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/block-env-access.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/prettier-precommit.sh"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
@@ -104,19 +124,10 @@
       "allowManagedDomainsOnly": false
     },
     "filesystem": {
-      "allowWrite": [
-        "/tmp/build"
-      ],
-      "denyRead": [
-        "~/.ssh",
-        "~/.aws",
-        "~/.gnupg",
-        "~/.kube/config"
-      ]
+      "allowWrite": ["/tmp/build"],
+      "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg", "~/.kube/config"]
     },
-    "excludedCommands": [
-      "docker"
-    ]
+    "excludedCommands": ["docker"]
   },
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true

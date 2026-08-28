@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Custom Forms — a no-code Designer + Runtime app builder. **Creators** assemble multi-field forms/screens from a curated component kit (Designer); **Users** fill them in and revisit their own previously entered data (Runtime); **Admins** manage users/roles. See `docs/features/custom-forms/PRD.md` and `sad.md` for full requirements/architecture, and `README.md` for a quick overview.
+Custom Forms — a no-code Designer + Runtime app builder. **Creators** assemble multi-field forms/screens from a curated component kit (Designer); **Users** fill them in and revisit their own previously entered data (Runtime); **Admins** manage users/roles. See `docs/PROJECT.md` for the project scope and feature index, and `README.md` for a quick overview.
 
 ## Stack & structure
 
@@ -14,7 +14,7 @@ Nx 22 monorepo (npm, single root `package.json` — no per-project package.json 
 - `client/apps/` — Angular 21 SPA using `@angular-architects/native-federation` (module federation): `shell` (host), `designer`, `runtime`, `user-administration` (each has a paired `-e2e` Playwright project).
 - `client/libs/` — `ui` (Storybook component library), `auth`, `http`, `api-client` (generated, see below — don't hand-edit).
 - DB: PostgreSQL via Drizzle ORM. Schema at `server/api/src/db/schema.ts`, migrations at `server/api/src/db/migrations/`.
-- `docs/features/custom-forms/` — SDLC-pipeline artifacts (idea-brief, PRD, SAD, ADRs) for this feature; `docs/architecture-map.md` is the repo-wide architecture map.
+- `docs/PROJECT.md` — project scope + feature index; `docs/idea-brief.md`, `docs/CONTEXT.md`, `docs/adr/` — project-wide SDLC artifacts; `docs/features/<feature>/` (one dir per feature: `user-administration`, `designer` + its sub-features `forms-editor`/`schema-viewer`/`template-actions`, `runtime`) — per-feature PRD/SAD/ADRs; `docs/architecture-map.md` is the repo-wide architecture map.
 
 ## Commands
 

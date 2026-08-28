@@ -9,7 +9,7 @@ This repo's backend is a layered, module-per-domain NestJS app under `server/api
 
 ## 1. Decide: existing module or new module?
 
-Read `docs/features/custom-forms/sad.md` §4 and `CLAUDE.md` first if you haven't — the rule already decided for this repo is: **a module owns one set of invariants**. Don't fold a new concern into a module whose invariants mean something else (e.g. per-User submitted form data doesn't belong in `schemas`, which owns schema definitions — that's why `forms-data` is a separate module per ADR-0001).
+Read `docs/adr/0001-dedicated-forms-data-and-templates-tables.md` and `CLAUDE.md` first if you haven't — the rule already decided for this repo is: **a module owns one set of invariants**. Don't fold a new concern into a module whose invariants mean something else (e.g. per-User submitted form data doesn't belong in `schemas`, which owns schema definitions — that's why `forms-data` is a separate module per ADR-0001).
 
 - **Endpoint fits an existing module's invariants** (e.g. another `schemas` action, another `users` admin action) → add to that module.
 - **Endpoint is a new domain concern** (a table/concept that doesn't belong to any existing module's invariants) → scaffold a new module (§5 below).

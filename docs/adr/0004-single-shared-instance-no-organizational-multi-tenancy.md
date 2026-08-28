@@ -1,11 +1,11 @@
 ---
 status: Accepted
-owner: "Oleksandr Vorovchenko"
+owner: 'Oleksandr Vorovchenko'
 reviewers: []
-updated_at: "2026-08-09"
+updated_at: '2026-08-09'
 feature_size: L
-stage: "04-05"
-ticket: "<TBD>"
+stage: '04-05'
+ticket: '<TBD>'
 ---
 
 # 0004 — Run custom-forms as a single shared instance with per-User data isolation, no organizational multi-tenancy
@@ -37,15 +37,18 @@ PRD §8 explicitly left open: "Is custom-forms a single shared internal instance
 ## Consequences
 
 **Positive**
+
 - No new entity, no new FK, no new query-scoping layer beyond what ADR-0001's `forms_data` table (`UNIQUE(schemaId, userId)`) already provides.
 - Matches AC-11's explicit design: schemas/templates are a shared library across all Creators/Admins, not partitioned.
 - Keeps the data model from ADR-0001 exactly as designed — no rework.
 
 **Negative**
+
 - If a future iteration genuinely needs to isolate different business clients' schemas/templates from each other (not just User-level forms-data isolation), this is a real re-platforming effort: a new `tenant` entity, a `tenant_id` FK backfilled onto `schemas`, `schemas_versions`, `templates`, and `forms_data`, plus tenant-scoping added to every query and every role-guard check.
 
 **Neutral**
-- The word "client" in this feature's vocabulary means "the User role, using Runtime" — not an organizational/business tenant. This should be reflected in `docs/features/custom-forms/CONTEXT.md` if the term causes confusion later (flagged for a `sdlc:fix-term` follow-up).
+
+- The word "client" in this feature's vocabulary means "the User role, using Runtime" — not an organizational/business tenant. This should be reflected in `docs/CONTEXT.md` if the term causes confusion later (flagged for a `sdlc:fix-term` follow-up).
 
 ## Links
 

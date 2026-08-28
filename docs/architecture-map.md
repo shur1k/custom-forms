@@ -1,8 +1,8 @@
 ---
 status: current
 mode: current
-updated_at: "2026-08-09"
-reflects_commit: "ff020e5"
+updated_at: '2026-08-09'
+reflects_commit: 'ff020e5'
 ---
 
 # Architecture map — custom-forms
@@ -11,8 +11,8 @@ reflects_commit: "ff020e5"
 > write-prd / architecture-design / generate-data-model / implement-tasks. Refresh with
 > `/sdlc-map-architecture` when the repo drifts past `reflects_commit`. This is generated; a
 > hand-maintained `docs/architecture.md`, if present, is authoritative and reconciled below — not
-> replaced. (No such doc exists in this repo; `docs/features/custom-forms/sad.md` is the closest
-> authored architecture doc, and is a target/intent document — see Reconciliation below.)
+> replaced. (No such doc exists in this repo; each feature's `docs/features/<feature>/sad.md` is the
+> closest authored architecture doc, and each is a target/intent document — see Reconciliation below.)
 
 ## Stack
 
@@ -52,23 +52,23 @@ C4Container
 
 ## Module inventory
 
-| Module | Path | Layers | Wired at | Responsibility |
-|---|---|---|---|---|
-| shell | `client/apps/shell` | host app | `client/apps/shell/federation.config.js` | Federation host, routing to remotes, role-based guard |
-| designer | `client/apps/designer` | remote app: `form-list/`, `form-editor/` (`canvas/`, `component-palette/`, `properties-panel/`), `schema-viewer/` | `client/apps/designer/federation.config.js:6-8` (exposes `./Routes`) | Creator-facing form builder |
-| runtime | `client/apps/runtime` | remote app (currently minimal) | `client/apps/shell/federation.config.js:8` | User-facing form filler (in progress) |
-| user-administration | `client/apps/user-administration` | remote app | `client/apps/shell/federation.config.js:9` | User/role management |
-| api-client (lib) | `client/libs/api-client` | generated DTOs | `client/libs/api-client/src/lib/api.ts:6-10` | Swagger-generated typed HTTP DTOs |
-| http (lib) | `client/libs/http` | infra | `client/libs/http/src/lib/base-http.service.ts:1-26` | `BaseHttpService` wrapping `HttpClient`, `API_BASE_URL` token |
-| auth (lib) | `client/libs/auth` | infra | `client/libs/auth/src/lib/auth.interceptor.ts:1-9`, `auth-state.service.ts:1-28` | JWT storage (localStorage), signal-based auth state, HTTP interceptor |
-| ui (lib) | `client/libs/ui` | shared design system | `client/libs/ui/src/lib/{button,input,select}` | Shared standalone components + Storybook |
-| drizzle | `server/api/src/app/drizzle` | infra | `server/api/src/app/drizzle/drizzle.module.ts:1-23` | DB connection, exports `DRIZZLE_DB` token |
-| auth | `server/api/src/app/auth` | domain module (controller/service/dto) | `server/api/src/app/auth/auth.module.ts:1-21` | Register/login, JWT issuing (`bcryptjs`, `@nestjs/jwt`, `passport-jwt`) |
-| schemas | `server/api/src/app/schemas` | domain module (controller/service/dto) | `server/api/src/app/schemas/schemas.module.ts` | Form schema CRUD + publish (versioning) |
-| users | `server/api/src/app/users` | domain module | (per SAD §2; roles guard) | User CRUD + role assignment |
-| db schema/migrations | `server/api/src/db` | data | `server/api/src/db/schema.ts:1-94`, `server/api/src/db/migrations/` | Drizzle table defs + generated SQL migrations |
+| Module               | Path                              | Layers                                                                                                            | Wired at                                                                         | Responsibility                                                          |
+| -------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| shell                | `client/apps/shell`               | host app                                                                                                          | `client/apps/shell/federation.config.js`                                         | Federation host, routing to remotes, role-based guard                   |
+| designer             | `client/apps/designer`            | remote app: `form-list/`, `form-editor/` (`canvas/`, `component-palette/`, `properties-panel/`), `schema-viewer/` | `client/apps/designer/federation.config.js:6-8` (exposes `./Routes`)             | Creator-facing form builder                                             |
+| runtime              | `client/apps/runtime`             | remote app (currently minimal)                                                                                    | `client/apps/shell/federation.config.js:8`                                       | User-facing form filler (in progress)                                   |
+| user-administration  | `client/apps/user-administration` | remote app                                                                                                        | `client/apps/shell/federation.config.js:9`                                       | User/role management                                                    |
+| api-client (lib)     | `client/libs/api-client`          | generated DTOs                                                                                                    | `client/libs/api-client/src/lib/api.ts:6-10`                                     | Swagger-generated typed HTTP DTOs                                       |
+| http (lib)           | `client/libs/http`                | infra                                                                                                             | `client/libs/http/src/lib/base-http.service.ts:1-26`                             | `BaseHttpService` wrapping `HttpClient`, `API_BASE_URL` token           |
+| auth (lib)           | `client/libs/auth`                | infra                                                                                                             | `client/libs/auth/src/lib/auth.interceptor.ts:1-9`, `auth-state.service.ts:1-28` | JWT storage (localStorage), signal-based auth state, HTTP interceptor   |
+| ui (lib)             | `client/libs/ui`                  | shared design system                                                                                              | `client/libs/ui/src/lib/{button,input,select}`                                   | Shared standalone components + Storybook                                |
+| drizzle              | `server/api/src/app/drizzle`      | infra                                                                                                             | `server/api/src/app/drizzle/drizzle.module.ts:1-23`                              | DB connection, exports `DRIZZLE_DB` token                               |
+| auth                 | `server/api/src/app/auth`         | domain module (controller/service/dto)                                                                            | `server/api/src/app/auth/auth.module.ts:1-21`                                    | Register/login, JWT issuing (`bcryptjs`, `@nestjs/jwt`, `passport-jwt`) |
+| schemas              | `server/api/src/app/schemas`      | domain module (controller/service/dto)                                                                            | `server/api/src/app/schemas/schemas.module.ts`                                   | Form schema CRUD + publish (versioning)                                 |
+| users                | `server/api/src/app/users`        | domain module                                                                                                     | (per SAD §2; roles guard)                                                        | User CRUD + role assignment                                             |
+| db schema/migrations | `server/api/src/db`               | data                                                                                                              | `server/api/src/db/schema.ts:1-94`, `server/api/src/db/migrations/`              | Drizzle table defs + generated SQL migrations                           |
 
-**Planned, not yet present in code** (per `docs/features/custom-forms/adr/0001-*.md`): `forms-data` and `templates` NestJS modules + tables.
+**Planned, not yet present in code** (per `docs/adr/0001-*.md`): `forms-data` and `templates` NestJS modules + tables.
 
 ## Conventions (cited)
 
@@ -83,8 +83,8 @@ C4Container
 
 ## Datastores
 
-| Store | Engine | Accessed via | Notes |
-|---|---|---|---|
+| Store      | Engine        | Accessed via                                                  | Notes                                                                                                                                                                                                                                      |
+| ---------- | ------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Primary DB | PostgreSQL 16 | Drizzle ORM (`postgres` driver), `DRIZZLE_DB` injection token | Connection via `DATABASE_URL` env — `server/api/src/app/drizzle/drizzle.module.ts:16`; schema at `server/api/src/db/schema.ts`; tables: `roles`, `users`, `schemas`, `schemasTypes`, `schemasVersions` (JSONB for schema/version payloads) |
 
 ## Frontend / UI foundation
@@ -114,4 +114,4 @@ C4Container
 
 ## Reconciliation with the authored architecture doc
 
-`docs/features/custom-forms/sad.md` is a per-feature Arc42 SAD (status: Draft), not a repo-wide architecture doc — it describes the **intended** architecture for the custom-forms feature, including two modules (`forms-data`, `templates`) not yet present in code. This map reflects the **verified current state**; where `sad.md` and the code disagree (planned-but-unbuilt modules), this map defers to the code and notes the gap above. No repo-root `docs/architecture.md` or `CLAUDE.md` exists to reconcile against.
+Each `docs/features/<feature>/sad.md` (e.g. `docs/features/runtime/sad.md`, `docs/features/designer/template-actions/sad.md`) is a per-feature Arc42 SAD (status: Draft), not a repo-wide architecture doc — together they describe the **intended** architecture for the custom-forms project, including two modules (`forms-data`, `templates`) not yet present in code. This map reflects the **verified current state**; where a feature's `sad.md` and the code disagree (planned-but-unbuilt modules), this map defers to the code and notes the gap above.

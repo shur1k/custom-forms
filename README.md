@@ -2,7 +2,7 @@
 
 A no-code app builder MVP: **Creators** assemble multi-page forms/screens from a curated component library in the **Designer**, and **Users** fill them in through the **Runtime**, revisiting their own previously entered data on later visits. **Admins** manage user accounts and roles.
 
-The MVP validates whether Angular can fully render a dynamic, config-driven UI before investing further in a full no-code product. See `docs/features/custom-forms/idea-brief.md`, `PRD.md`, and `sad.md` for the full problem statement, requirements, and architecture.
+The MVP validates whether Angular can fully render a dynamic, config-driven UI before investing further in a full no-code product. See `docs/PROJECT.md` for the project scope and feature index, `docs/idea-brief.md` for the original problem statement, and each feature's `docs/features/<feature>/PRD.md` / `sad.md` for requirements and architecture.
 
 ## Stack
 
@@ -24,7 +24,11 @@ client/libs/ui/                  Shared component library (Storybook)
 client/libs/auth/                Shared auth logic
 client/libs/http/                Shared HTTP client setup
 client/libs/api-client/          Generated API client (do not hand-edit)
-docs/features/custom-forms/      Idea brief, PRD, SAD, ADRs for this feature
+docs/PROJECT.md                  Project scope + feature index
+docs/idea-brief.md                Project-wide idea brief
+docs/CONTEXT.md                   Project-wide domain glossary
+docs/adr/                         Project-wide architecture decisions
+docs/features/<feature>/          Per-feature PRD, SAD, ADRs (user-administration, designer + sub-features, runtime)
 docs/architecture-map.md         Repo-wide architecture map
 ```
 

@@ -1,0 +1,162 @@
+{
+  "slug": "runtime",
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Add forms_data table to Drizzle schema + migration",
+      "layer": "migration",
+      "deps": [],
+      "acs": ["AC-17", "AC-20"],
+      "dod": "staged migration applies and reverts cleanly; unique(schema_id, user_id) enforces one-record-per-user-per-form",
+      "files_hint": [
+        "server/api/src/db/schema.ts",
+        "docs/features/runtime/migrations/01_forms_data/"
+      ]
+    },
+    {
+      "id": "T2",
+      "title": "Implement FormsDataService (prefill, upsert submit, delete own)",
+      "layer": "app",
+      "deps": ["T1"],
+      "acs": ["AC-17", "AC-19", "AC-20", "AC-29"],
+      "dod": "unit tests for upsert-on-resubmit and userId-scoped reads/deletes pass",
+      "files_hint": ["server/api/src/app/forms-data/forms-data.service.ts"]
+    },
+    {
+      "id": "T3",
+      "title": "Add SchemasService.findPublishedById (published-only gate)",
+      "layer": "app",
+      "deps": [],
+      "acs": ["AC-14"],
+      "dod": "lookup of an unpublished or missing schema throws NotFoundException",
+      "files_hint": ["server/api/src/app/schemas/schemas.service.ts"]
+    },
+    {
+      "id": "T4",
+      "title": "Add FormsDataController (get/submit/delete own forms data)",
+      "layer": "ports",
+      "deps": ["T2", "T3"],
+      "acs": ["AC-14", "AC-17", "AC-18", "AC-19", "AC-20", "AC-29"],
+      "dod": "handlers return the spec'd outcome for AC-14/17/18/19/20/29, scoped by req.user.id, role-guarded per ADR-0002",
+      "files_hint": [
+        "server/api/src/app/forms-data/forms-data.controller.ts",
+        "server/api/src/app/forms-data/dto/"
+      ]
+    },
+    {
+      "id": "T5",
+      "title": "Add published-forms discovery endpoint",
+      "layer": "ports",
+      "deps": ["T3"],
+      "acs": ["AC-30"],
+      "dod": "endpoint returns only forms with a published version, for any authenticated role",
+      "files_hint": [
+        "server/api/src/app/schemas/schemas.controller.ts",
+        "server/api/src/app/schemas/schemas.service.ts"
+      ]
+    },
+    {
+      "id": "T6",
+      "title": "Wire FormsDataModule into the app",
+      "layer": "wiring",
+      "deps": ["T1", "T2", "T4"],
+      "acs": [],
+      "dod": "API boots with the new module registered; Drizzle relations for forms_data resolve",
+      "files_hint": [
+        "server/api/src/app/forms-data/forms-data.module.ts",
+        "server/api/src/app/app.module.ts",
+        "server/api/src/db/schema.ts"
+      ]
+    },
+    {
+      "id": "T7",
+      "title": "Backend tests for forms-data (isolation, validation, publish-gate)",
+      "layer": "tests",
+      "deps": ["T4", "T5"],
+      "acs": ["AC-14", "AC-17", "AC-18", "AC-19", "AC-20", "AC-29"],
+      "dod": "a cross-account isolation test asserts account B never reads account A's forms data; validation test blocks an invalid submit and saves nothing",
+      "files_hint": [
+        "server/api/src/app/forms-data/forms-data.service.spec.ts",
+        "server/api/src/app/forms-data/forms-data.controller.spec.ts"
+      ]
+    },
+    {
+      "id": "T8",
+      "title": "Regenerate client/libs/api-client for the new endpoints",
+      "layer": "infra",
+      "deps": ["T4", "T5"],
+      "acs": [],
+      "dod": "npm run api:generate-client succeeds and the new endpoints have typed client methods",
+      "files_hint": ["client/libs/api-client/src/lib/"]
+    },
+    {
+      "id": "T9",
+      "title": "Build Runtime form-list discovery screen",
+      "layer": "ui",
+      "deps": ["T8"],
+      "acs": ["AC-30"],
+      "dod": "form-list renders the published-forms list from the discovery endpoint, modelled on designer/form-list",
+      "files_hint": ["client/apps/runtime/src/app/form-list/"]
+    },
+    {
+      "id": "T10",
+      "title": "Build Runtime form-viewer renderer with per-component error fallback",
+      "layer": "ui",
+      "deps": ["T8"],
+      "acs": ["AC-15", "AC-16"],
+      "dod": "a component with a broken data binding renders a visible error placeholder instead of a blank screen or uncaught error; text/link values render via template binding, never innerHTML",
+      "files_hint": ["client/apps/runtime/src/app/form-viewer/"]
+    },
+    {
+      "id": "T11",
+      "title": "Add form-viewer submit validation",
+      "layer": "ui",
+      "deps": ["T10"],
+      "acs": ["AC-18"],
+      "dod": "submitting with a required field empty or an invalid value blocks submission, marks the failing field(s), and saves no partial data",
+      "files_hint": ["client/apps/runtime/src/app/form-viewer/"]
+    },
+    {
+      "id": "T12",
+      "title": "Wire form-viewer to forms-data endpoints (prefill/submit/delete)",
+      "layer": "ui",
+      "deps": ["T11", "T8"],
+      "acs": ["AC-17", "AC-19", "AC-29"],
+      "dod": "returning to a form pre-fills the User's own prior submission; submit and delete round-trip through the API and update the view",
+      "files_hint": ["client/apps/runtime/src/app/form-viewer/"]
+    },
+    {
+      "id": "T13",
+      "title": "Wire Runtime routing into the shell",
+      "layer": "ui",
+      "deps": ["T9", "T12"],
+      "acs": [],
+      "dod": "a User can navigate shell to Runtime to form-list to a filled form via native-federation routes",
+      "files_hint": [
+        "client/apps/runtime/src/app/app.routes.ts",
+        "client/apps/runtime/federation.config.js"
+      ]
+    },
+    {
+      "id": "T14",
+      "title": "Frontend tests for form-list and form-viewer",
+      "layer": "tests",
+      "deps": ["T9", "T10", "T11", "T12"],
+      "acs": ["AC-15", "AC-16", "AC-18", "AC-19", "AC-29", "AC-30"],
+      "dod": "component tests (Vitest + TestBed) cover prefill, submit, validation-block, and the error-placeholder fallback",
+      "files_hint": [
+        "client/apps/runtime/src/app/form-list/",
+        "client/apps/runtime/src/app/form-viewer/"
+      ]
+    },
+    {
+      "id": "T15",
+      "title": "Runtime e2e happy path + edge cases",
+      "layer": "tests",
+      "deps": ["T13", "T14"],
+      "acs": ["AC-14", "AC-17", "AC-18", "AC-19", "AC-30"],
+      "dod": "Playwright e2e covers fill+submit+return+prefill, a blocked invalid submit, and an unpublished form staying hidden",
+      "files_hint": ["client/apps/runtime-e2e/"]
+    }
+  ]
+}

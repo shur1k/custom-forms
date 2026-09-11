@@ -1,6 +1,7 @@
 <div
   class="canvas"
   #canvasEl
+  [style.--cell-size.px]="cellSize()"
   cdkDropList
   id="canvas-drop-list"
   [cdkDropListConnectedTo]="['palette-drop-list']"

@@ -3,12 +3,10 @@
   width: 100%;
   min-height: 800px;
   box-sizing: border-box;
-  // White background + 12-col / 80px-row grid via background-size tiling
+  // White background + 64-col / 80px-row grid, dots at intersections
   background-color: #ffffff;
-  background-image:
-    linear-gradient(to right,  #e5e7eb 1px, transparent 1px),
-    linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
-  background-size: calc(100% / 12) 80px;
+  background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px);
+  background-size: calc(100% / 64) var(--cell-size, 80px);
 
   &__item {
     position: absolute;
@@ -28,7 +26,9 @@
       background: rgba(99, 102, 241, 0.04);
 
       .canvas__remove,
-      .canvas__resize-handle { opacity: 1; }
+      .canvas__resize-handle {
+        opacity: 1;
+      }
     }
 
     &--dragging {
@@ -39,7 +39,9 @@
       border-color: #6366f1;
 
       .canvas__remove,
-      .canvas__resize-handle { opacity: 1; }
+      .canvas__resize-handle {
+        opacity: 1;
+      }
     }
   }
 
@@ -94,7 +96,9 @@
     pointer-events: none;
     cursor: default;
 
-    &:disabled { opacity: 0.5; }
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 
   // ── Controls ─────────────────────────────────────────────────────────────
@@ -118,7 +122,9 @@
     transition: opacity 0.15s;
     pointer-events: auto;
 
-    &:hover { background: #dc2626; }
+    &:hover {
+      background: #dc2626;
+    }
   }
 
   &__resize-handle {

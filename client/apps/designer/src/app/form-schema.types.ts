@@ -1,7 +1,7 @@
 export type ComponentType = 'input' | 'select' | 'button' | 'text-area';
 
-export type Col = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-export type ColSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export type Col = number;
+export type ColSpan = number;
 
 declare const _rowBrand: unique symbol;
 declare const _rowSpanBrand: unique symbol;
@@ -86,8 +86,8 @@ export function schemaToComponents(
       type: ui.component,
       col: asCol(ui.col ?? 0),
       row: asRow(ui.row ?? 0),
-      w: asColSpan(ui.w ?? 3),
-      h: asRowSpan(ui.h ?? 1),
+      w: asColSpan(ui.w ?? 12),
+      h: asRowSpan(ui.h ?? 4),
       props: {
         label: prop.title ?? '',
         showTitle: ui.showTitle ?? true,
@@ -103,8 +103,8 @@ export function schemaToComponents(
       type: 'button',
       col: asCol(action.col ?? 0),
       row: asRow(action.row ?? 0),
-      w: asColSpan(action.w ?? 2),
-      h: asRowSpan(action.h ?? 1),
+      w: asColSpan(action.w ?? 8),
+      h: asRowSpan(action.h ?? 4),
       props: {
         label: action.label ?? 'Button',
         showTitle: true,

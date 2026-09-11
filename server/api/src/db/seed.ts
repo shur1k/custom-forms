@@ -22,7 +22,7 @@ async function seed() {
         name: 'superuser',
         description: 'Super-administrator with full access',
       },
-    ])
+    ] satisfies (typeof roles.$inferInsert)[])
     .onConflictDoNothing();
 
   console.log('Seeding schemas_types...');
@@ -32,7 +32,7 @@ async function seed() {
       { name: 'form', description: 'Form with input fields' },
       { name: 'page', description: 'Free-form page with components' },
       { name: 'dashboard', description: 'Dashboard with widgets' },
-    ])
+    ] satisfies (typeof schemasTypes.$inferInsert)[])
     .onConflictDoNothing();
 
   console.log('Seeding superuser account...');
@@ -44,7 +44,11 @@ async function seed() {
     const passwordHash = await bcrypt.hash('$uperUser_25', 12);
     await db
       .insert(users)
-      .values({ email: 'superuser@test.com', passwordHash, roleId: superuserRole.id })
+      .values({
+        email: 'superuser@test.com',
+        passwordHash,
+        roleId: superuserRole.id,
+      } satisfies typeof users.$inferInsert)
       .onConflictDoNothing();
   }
 

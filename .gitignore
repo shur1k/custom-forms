@@ -7,3 +7,4 @@ dist/
 .nx/
 *.tsbuildinfo
 .angular/
+.DS_Store

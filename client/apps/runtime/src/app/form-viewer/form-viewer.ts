@@ -73,6 +73,8 @@ export class FormViewer implements OnInit {
   readonly storedSchema = signal<StoredSchema | null>(null);
   readonly isLoading = signal(false);
   readonly loadError = signal<string | null>(null);
+  readonly priorValues = signal<Record<string, unknown> | null>(null);
+  readonly submitMessage = signal<string | null>(null);
 
   readonly gridCols = GRID_COLS;
 
@@ -94,7 +96,15 @@ export class FormViewer implements OnInit {
 
   constructor() {
     effect(() => {
-      this.form = new FormGroup(this.buildControls(this.renderItems()));
+      const controls = this.buildControls(this.renderItems());
+      const prior = this.priorValues();
+      if (prior) {
+        for (const [id, control] of Object.entries(controls)) {
+          const value = prior[id];
+          if (typeof value === 'string') control.setValue(value);
+        }
+      }
+      this.form = new FormGroup(controls);
     });
   }
 
@@ -111,6 +121,7 @@ export class FormViewer implements OnInit {
       .subscribe({
         next: (res) => {
           this.storedSchema.set(res.schema?.schema ?? null);
+          this.priorValues.set(res.values ?? null);
           this.isLoading.set(false);
         },
         error: () => {
@@ -123,7 +134,27 @@ export class FormViewer implements OnInit {
   onSubmitClick(): void {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
-    // T12 wires the actual submit/prefill/delete API round-trip here.
+
+    this.submitMessage.set(null);
+    this.http
+      .put(`/schemas/${this.schemaId()}/forms-data`, {
+        values: this.form.getRawValue(),
+      })
+      .subscribe({
+        next: () => this.submitMessage.set('Submitted — your data was saved.'),
+        error: () => this.submitMessage.set('Submit failed. Please try again.'),
+      });
+  }
+
+  onDeleteClick(): void {
+    this.submitMessage.set(null);
+    this.http.delete(`/schemas/${this.schemaId()}/forms-data`).subscribe({
+      next: () => {
+        this.form.reset();
+        this.submitMessage.set('Your data was deleted.');
+      },
+      error: () => this.submitMessage.set('Delete failed. Please try again.'),
+    });
   }
 
   fieldError(id: string): string | null {

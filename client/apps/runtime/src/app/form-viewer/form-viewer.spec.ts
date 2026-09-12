@@ -199,4 +199,62 @@ describe('FormViewer', () => {
       expect(component.fieldError('role')).toBeNull();
     });
   });
+
+  describe('data wiring (AC-17/19/29)', () => {
+    const simpleSchema = (): StoredSchema => ({
+      ...buildSchema({
+        name: {
+          type: 'string',
+          title: 'Name',
+          'x-ui': { ...baseXUi, component: 'input' },
+        },
+      }),
+      required: ['name'],
+    });
+
+    it("prefills the form with the caller's own previously submitted values (AC-19)", () => {
+      fixture.detectChanges();
+      http.expectOne(API).flush({
+        schema: { schema: simpleSchema() },
+        values: { name: 'Alice' },
+      });
+      fixture.detectChanges();
+
+      expect(component.form.controls['name'].value).toBe('Alice');
+    });
+
+    it('submits valid data via PUT and shows a confirmation (AC-17)', () => {
+      fixture.detectChanges();
+      http
+        .expectOne(API)
+        .flush({ schema: { schema: simpleSchema() }, values: null });
+      fixture.detectChanges();
+
+      component.form.controls['name'].setValue('Alice');
+      component.onSubmitClick();
+
+      const req = http.expectOne({ method: 'PUT', url: API });
+      expect(req.request.body).toEqual({ values: { name: 'Alice' } });
+      req.flush({ id: 'row-1', values: { name: 'Alice' } });
+
+      expect(component.submitMessage()).toBeTruthy();
+    });
+
+    it('deletes own data via DELETE and reverts the form to empty (AC-29)', () => {
+      fixture.detectChanges();
+      http.expectOne(API).flush({
+        schema: { schema: simpleSchema() },
+        values: { name: 'Alice' },
+      });
+      fixture.detectChanges();
+
+      expect(component.form.controls['name'].value).toBe('Alice');
+
+      component.onDeleteClick();
+      http.expectOne({ method: 'DELETE', url: API }).flush(null);
+
+      expect(component.form.controls['name'].value).toBe('');
+      expect(component.submitMessage()).toBeTruthy();
+    });
+  });
 });

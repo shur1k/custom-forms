@@ -1,5 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { API_BASE_URL } from './api-base-url.token';
 import { BaseHttpService } from './base-http.service';
@@ -40,6 +43,13 @@ describe('BaseHttpService', () => {
     service.patch('/items/1', { name: 'y' }).subscribe();
     const req = http.expectOne(`${BASE}/items/1`);
     expect(req.request.method).toBe('PATCH');
+    req.flush({});
+  });
+
+  it('PUT prepends base URL', () => {
+    service.put('/items/1', { name: 'z' }).subscribe();
+    const req = http.expectOne(`${BASE}/items/1`);
+    expect(req.request.method).toBe('PUT');
     req.flush({});
   });
 

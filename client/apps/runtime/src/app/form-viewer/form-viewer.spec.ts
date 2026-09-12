@@ -141,4 +141,62 @@ describe('FormViewer', () => {
     expect(component.loadError()).toBeTruthy();
     expect(component.isLoading()).toBe(false);
   });
+
+  describe('submit validation (AC-18)', () => {
+    const requiredSchema = (): StoredSchema => ({
+      ...buildSchema({
+        name: {
+          type: 'string',
+          title: 'Name',
+          'x-ui': { ...baseXUi, component: 'input' },
+        },
+        role: {
+          type: 'string',
+          title: 'Role',
+          enum: ['admin', 'user'],
+          'x-ui': { ...baseXUi, component: 'select' },
+        },
+      }),
+      required: ['name'],
+    });
+
+    const load = (schema: StoredSchema): void => {
+      fixture.detectChanges();
+      http.expectOne(API).flush({ schema: { schema }, values: null });
+      fixture.detectChanges();
+    };
+
+    it('blocks submission and marks the field when a required field is empty', () => {
+      load(requiredSchema());
+
+      component.onSubmitClick();
+
+      expect(component.form.invalid).toBe(true);
+      expect(component.form.controls['name'].invalid).toBe(true);
+      expect(component.fieldError('name')).toBeTruthy();
+    });
+
+    it("blocks submission when a select value isn't one of the field's options", () => {
+      load(requiredSchema());
+      component.form.controls['name'].setValue('Alice');
+      component.form.controls['role'].setValue('superuser');
+
+      component.onSubmitClick();
+
+      expect(component.form.invalid).toBe(true);
+      expect(component.fieldError('role')).toBeTruthy();
+    });
+
+    it('allows submission to proceed when every field is valid', () => {
+      load(requiredSchema());
+      component.form.controls['name'].setValue('Alice');
+      component.form.controls['role'].setValue('admin');
+
+      component.onSubmitClick();
+
+      expect(component.form.valid).toBe(true);
+      expect(component.fieldError('name')).toBeNull();
+      expect(component.fieldError('role')).toBeNull();
+    });
+  });
 });

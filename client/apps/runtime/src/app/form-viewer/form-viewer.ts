@@ -2,10 +2,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   OnInit,
   signal,
 } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
 import { BaseHttpService } from '@custom-forms/http';
@@ -55,7 +63,7 @@ type RenderResult =
   templateUrl: './form-viewer.html',
   styleUrl: './form-viewer.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Input, Select, TextArea, Button],
+  imports: [Input, Select, TextArea, Button, ReactiveFormsModule],
 })
 export class FormViewer implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -67,6 +75,8 @@ export class FormViewer implements OnInit {
   readonly loadError = signal<string | null>(null);
 
   readonly gridCols = GRID_COLS;
+
+  form = new FormGroup<Record<string, FormControl<string>>>({});
 
   readonly renderItems = computed<RenderResult[]>(() => {
     const schema = this.storedSchema();
@@ -81,6 +91,12 @@ export class FormViewer implements OnInit {
     }
     return results;
   });
+
+  constructor() {
+    effect(() => {
+      this.form = new FormGroup(this.buildControls(this.renderItems()));
+    });
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('schemaId') ?? '';
@@ -102,6 +118,50 @@ export class FormViewer implements OnInit {
           this.isLoading.set(false);
         },
       });
+  }
+
+  onSubmitClick(): void {
+    this.form.markAllAsTouched();
+    if (this.form.invalid) return;
+    // T12 wires the actual submit/prefill/delete API round-trip here.
+  }
+
+  fieldError(id: string): string | null {
+    const control = this.form.controls[id];
+    if (!control || !control.touched || control.valid) return null;
+    if (control.errors?.['required']) return 'This field is required';
+    if (control.errors?.['invalidOption'])
+      return 'Please choose a valid option';
+    return 'Invalid value';
+  }
+
+  private buildControls(
+    items: RenderResult[],
+  ): Record<string, FormControl<string>> {
+    const required = this.storedSchema()?.required ?? [];
+    const controls: Record<string, FormControl<string>> = {};
+
+    for (const item of items) {
+      if (!item.ok || item.view.kind === 'button') continue;
+
+      const validators: ValidatorFn[] = [];
+      if (required.includes(item.id)) validators.push(Validators.required);
+      if (item.view.kind === 'select' && item.view.options.length > 0) {
+        const allowed = item.view.options.map((option) => option.value);
+        validators.push((control) =>
+          control.value && !allowed.includes(control.value)
+            ? { invalidOption: true }
+            : null,
+        );
+      }
+
+      controls[item.id] = new FormControl('', {
+        nonNullable: true,
+        validators,
+      });
+    }
+
+    return controls;
   }
 
   itemStyle(view: {

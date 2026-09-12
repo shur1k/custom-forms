@@ -1,0 +1,35 @@
+<div class="form-viewer">
+  @if (isLoading()) {
+  <p>Loading…</p>
+  } @else if (loadError()) {
+  <p class="form-viewer__error">{{ loadError() }}</p>
+  } @else {
+  <div
+    class="form-viewer__grid"
+    [style.grid-template-columns]="'repeat(' + gridCols + ', 1fr)'"
+  >
+    @for (item of renderItems(); track item.id) { @if (item.ok) {
+    <div class="form-viewer__item" [style]="itemStyle(item.view)">
+      @switch (item.view.kind) { @case ('input') {
+      <lib-input [label]="item.view.showTitle ? item.view.label : ''" />
+      } @case ('select') {
+      <lib-select
+        [label]="item.view.showTitle ? item.view.label : ''"
+        [options]="item.view.options"
+      />
+      } @case ('text-area') {
+      <lib-text-area [label]="item.view.showTitle ? item.view.label : ''" />
+      } @case ('button') {
+      <lib-button [disabled]="item.view.disabled"
+        >{{ item.view.label }}</lib-button
+      >
+      } }
+    </div>
+    } @else {
+    <div class="form-viewer__item form-viewer__item--error">
+      <p class="form-viewer__error-placeholder">⚠ {{ item.errorMessage }}</p>
+    </div>
+    } }
+  </div>
+  }
+</div>

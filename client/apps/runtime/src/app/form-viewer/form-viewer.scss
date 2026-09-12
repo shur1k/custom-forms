@@ -1,0 +1,30 @@
+.form-viewer {
+  padding: 16px;
+
+  &__grid {
+    display: grid;
+    grid-auto-rows: 40px;
+    gap: 4px;
+  }
+
+  &__item {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  &__item--error {
+    border: 1px dashed #d32f2f;
+    border-radius: 4px;
+    padding: 4px 8px;
+  }
+
+  &__error-placeholder {
+    color: #d32f2f;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  &__error {
+    color: #d32f2f;
+  }
+}

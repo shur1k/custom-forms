@@ -22,11 +22,18 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
-  /* Run your local dev server before starting the tests */
+  /*
+   * Runtime is only reachable through the shell (native federation) —
+   * shell routes '/runtime/**' to this remote. Starting `runtime:serve`
+   * alone would never hit those routes, so this brings up the full
+   * federated dev stack (shell live, remotes static) per the repo's own
+   * fe:serve:shell:dev script.
+   */
   webServer: {
-    command: 'npx nx run runtime:serve',
+    command: 'npm run fe:serve:shell:dev',
     url: 'http://localhost:4200',
     reuseExistingServer: true,
+    timeout: 180_000,
     cwd: workspaceRoot,
   },
   projects: [

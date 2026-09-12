@@ -5,7 +5,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { BaseHttpService } from '@custom-forms/http';
 import { Button } from '@custom-forms/ui';
@@ -21,6 +21,7 @@ import { PublishedFormRow } from '../form-schema.types';
 export class FormList implements OnInit {
   private readonly http = inject(BaseHttpService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly forms = signal<PublishedFormRow[]>([]);
   readonly isLoading = signal(false);
@@ -37,6 +38,6 @@ export class FormList implements OnInit {
   }
 
   openForm(id: string): void {
-    this.router.navigate(['form-viewer', id]);
+    this.router.navigate(['form-viewer', id], { relativeTo: this.route });
   }
 }

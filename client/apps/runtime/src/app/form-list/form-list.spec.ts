@@ -65,6 +65,8 @@ describe('FormList', () => {
 
     component.openForm(mockForm.id);
 
-    expect(navigateSpy).toHaveBeenCalledWith(['form-viewer', mockForm.id]);
+    expect(navigateSpy).toHaveBeenCalledWith(['form-viewer', mockForm.id], {
+      relativeTo: expect.anything(),
+    });
   });
 });

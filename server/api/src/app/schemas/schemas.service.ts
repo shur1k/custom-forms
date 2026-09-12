@@ -18,7 +18,8 @@ export class SchemasService {
     const type = await this.db.query.schemasTypes.findFirst({
       where: eq(schemasTypes.name, dto.type),
     });
-    if (!type) throw new NotFoundException(`Schema type '${dto.type}' not found`);
+    if (!type)
+      throw new NotFoundException(`Schema type '${dto.type}' not found`);
 
     const [created] = await this.db
       .insert(schemas)
@@ -98,9 +99,28 @@ export class SchemasService {
 
     const [version] = await this.db
       .insert(schemasVersions)
-      .values({ schemaId: id, version: nextVersion, schema: existing.schema ?? {} })
+      .values({
+        schemaId: id,
+        version: nextVersion,
+        schema: existing.schema ?? {},
+      })
       .returning();
     return version;
+  }
+
+  async findPublishedById(id: string) {
+    const schema = await this.db.query.schemas.findFirst({
+      where: eq(schemas.id, id),
+      with: { type: true },
+    });
+    if (!schema) throw new NotFoundException('Schema not found');
+
+    const versions = await this.db.query.schemasVersions.findMany({
+      where: eq(schemasVersions.schemaId, id),
+    });
+    if (versions.length === 0) throw new NotFoundException('Schema not found');
+
+    return schema;
   }
 
   async findVersions(id: string) {

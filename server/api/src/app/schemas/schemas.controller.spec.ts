@@ -4,17 +4,18 @@ import { SchemasController } from './schemas.controller';
 import { SchemasService } from './schemas.service';
 
 const SCHEMA_ID = 'schema-uuid';
-const USER_ID   = 'user-uuid';
-const mockReq   = { user: { userId: USER_ID, role: 'user' } };
+const USER_ID = 'user-uuid';
+const mockReq = { user: { userId: USER_ID, role: 'user' } };
 
 const mockSchemasService = {
-  findAll:      jest.fn(),
-  findOne:      jest.fn(),
-  create:       jest.fn(),
-  update:       jest.fn(),
-  remove:       jest.fn(),
-  publish:      jest.fn(),
+  findAll: jest.fn(),
+  findOne: jest.fn(),
+  create: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn(),
+  publish: jest.fn(),
   findVersions: jest.fn(),
+  listPublished: jest.fn(),
 };
 
 describe('SchemasController', () => {
@@ -36,13 +37,22 @@ describe('SchemasController', () => {
   it('findAll passes numeric page, limit, userId, and role to service', () => {
     mockSchemasService.findAll.mockResolvedValue([]);
     controller.findAll(2, 5, mockReq);
-    expect(mockSchemasService.findAll).toHaveBeenCalledWith(2, 5, USER_ID, 'user');
+    expect(mockSchemasService.findAll).toHaveBeenCalledWith(
+      2,
+      5,
+      USER_ID,
+      'user',
+    );
   });
 
   it('findOne delegates to service with userId and role', () => {
     mockSchemasService.findOne.mockResolvedValue({ id: SCHEMA_ID });
     controller.findOne(SCHEMA_ID, mockReq);
-    expect(mockSchemasService.findOne).toHaveBeenCalledWith(SCHEMA_ID, USER_ID, 'user');
+    expect(mockSchemasService.findOne).toHaveBeenCalledWith(
+      SCHEMA_ID,
+      USER_ID,
+      'user',
+    );
   });
 
   it('create passes dto and userId to service', () => {
@@ -56,7 +66,11 @@ describe('SchemasController', () => {
     const dto = { title: 'Updated' };
     mockSchemasService.update.mockResolvedValue({ id: SCHEMA_ID });
     controller.update(SCHEMA_ID, dto, mockReq);
-    expect(mockSchemasService.update).toHaveBeenCalledWith(SCHEMA_ID, dto, USER_ID);
+    expect(mockSchemasService.update).toHaveBeenCalledWith(
+      SCHEMA_ID,
+      dto,
+      USER_ID,
+    );
   });
 
   it('remove passes id and userId to service', () => {
@@ -75,5 +89,11 @@ describe('SchemasController', () => {
     mockSchemasService.findVersions.mockResolvedValue([]);
     controller.findVersions(SCHEMA_ID);
     expect(mockSchemasService.findVersions).toHaveBeenCalledWith(SCHEMA_ID);
+  });
+
+  it('listPublished delegates to service with no args', () => {
+    mockSchemasService.listPublished.mockResolvedValue([]);
+    controller.listPublished();
+    expect(mockSchemasService.listPublished).toHaveBeenCalledWith();
   });
 });

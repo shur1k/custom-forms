@@ -1,7 +1,21 @@
 import {
-  Body, Controller, Delete, Get, Param, Patch, Post, Query, Request, UseGuards,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SchemasService } from './schemas.service';
 import { CreateSchemaDto } from './dto/create-schema.dto';
@@ -25,7 +39,18 @@ export class SchemasController {
     @Query('limit') limit = 20,
     @Request() req: ReqUser,
   ) {
-    return this.schemasService.findAll(+page, +limit, req.user.userId, req.user.role);
+    return this.schemasService.findAll(
+      +page,
+      +limit,
+      req.user.userId,
+      req.user.role,
+    );
+  }
+
+  @Get('published')
+  @ApiOperation({ summary: 'List schemas that have a published version' })
+  listPublished() {
+    return this.schemasService.listPublished();
   }
 
   @Get(':id')

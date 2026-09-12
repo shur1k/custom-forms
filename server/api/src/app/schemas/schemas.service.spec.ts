@@ -259,6 +259,30 @@ describe('SchemasService', () => {
     });
   });
 
+  // ── listPublished ─────────────────────────────────────────────────────────
+  describe('listPublished', () => {
+    it('returns only schemas that have at least one published version', async () => {
+      const draft = { ...mockSchema, id: 'draft-uuid', versions: [] };
+      const published = {
+        ...mockSchema,
+        id: 'published-uuid',
+        versions: [mockVersion],
+      };
+      db.query.schemas.findMany.mockResolvedValue([draft, published]);
+
+      const result = await service.listPublished();
+
+      expect(result).toEqual([published]);
+    });
+
+    it('returns an empty list when no schema is published', async () => {
+      db.query.schemas.findMany.mockResolvedValue([
+        { ...mockSchema, versions: [] },
+      ]);
+      await expect(service.listPublished()).resolves.toEqual([]);
+    });
+  });
+
   // ── findPublishedById ─────────────────────────────────────────────────────
   describe('findPublishedById', () => {
     it('throws NotFoundException when the schema does not exist', async () => {

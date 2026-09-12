@@ -108,6 +108,14 @@ export class SchemasService {
     return version;
   }
 
+  async listPublished() {
+    const all = await this.db.query.schemas.findMany({
+      orderBy: [desc(schemas.createdAt)],
+      with: { type: true, versions: true },
+    });
+    return all.filter((schema) => schema.versions.length > 0);
+  }
+
   async findPublishedById(id: string) {
     const schema = await this.db.query.schemas.findFirst({
       where: eq(schemas.id, id),

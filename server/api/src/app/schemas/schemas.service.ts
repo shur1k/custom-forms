@@ -125,10 +125,12 @@ export class SchemasService {
 
     const versions = await this.db.query.schemasVersions.findMany({
       where: eq(schemasVersions.schemaId, id),
+      orderBy: [desc(schemasVersions.publishedAt)],
     });
     if (versions.length === 0) throw new NotFoundException('Schema not found');
 
-    return schema;
+    const [latest] = versions;
+    return { ...schema, schema: latest.schema };
   }
 
   async findVersions(id: string) {

@@ -20,5 +20,9 @@
 | T13 | Runtime routing + shell wiring                            | ui        | Frontend Lead | S        | T9, T12           | done   |
 | T14 | Frontend `runtime` tests                                  | tests     | Frontend Lead | M        | T9, T10, T11, T12 | done   |
 | T15 | Runtime e2e (Playwright)                                  | tests     | Frontend Lead | M        | T13, T14          | done   |
+| T16 | Serve published snapshot, not live draft (review finding) | app       | Backend Lead  | S        | —                 | done   |
+| T17 | form-viewer render-time error boundary (review finding)   | ui        | Frontend Lead | S        | —                 | todo   |
+| T18 | Strip unknown keys from submitted values (review finding) | app       | Backend Lead  | S        | —                 | todo   |
+| T19 | Render Creator-configured textColor (review finding)      | ui        | Frontend Lead | S        | T17               | todo   |
 
-**Total:** 15 tasks, ~12 person-days (6 S ≈ 0.5d + 9 M ≈ 1d).
+**Total:** 15 tasks, ~12 person-days (6 S ≈ 0.5d + 9 M ≈ 1d). Plus 4 review follow-up tasks (T16–T19) from `_review/review-2026-09-20.md`.

@@ -157,6 +157,59 @@
       "acs": ["AC-14", "AC-17", "AC-18", "AC-19", "AC-30"],
       "dod": "Playwright e2e covers fill+submit+return+prefill, a blocked invalid submit, and an unpublished form staying hidden",
       "files_hint": ["client/apps/runtime-e2e/"]
+    },
+    {
+      "id": "T16",
+      "title": "Serve the published version snapshot in Runtime, not the live draft",
+      "layer": "app",
+      "deps": [],
+      "acs": ["AC-14", "AC-15", "AC-16", "AC-18"],
+      "dod": "findPublishedById returns the latest schemasVersions snapshot's schema, not schemas.schema; a test asserts a post-publish draft edit does not surface in Runtime",
+      "files_hint": [
+        "server/api/src/app/schemas/schemas.service.ts",
+        "server/api/src/app/schemas/schemas.service.spec.ts"
+      ],
+      "origin": "review-2026-09-20"
+    },
+    {
+      "id": "T17",
+      "title": "Add render-time error boundary to Runtime form-viewer (AC-16)",
+      "layer": "ui",
+      "deps": [],
+      "acs": ["AC-16"],
+      "dod": "a component that throws during rendering/change detection yields a per-component placeholder instead of blanking the view; a test forces a render-time throw and asserts the placeholder",
+      "files_hint": [
+        "client/apps/runtime/src/app/form-viewer/form-viewer.ts",
+        "client/apps/runtime/src/app/form-viewer/form-viewer.html",
+        "client/apps/runtime/src/app/form-viewer/form-viewer.spec.ts"
+      ],
+      "origin": "review-2026-09-20"
+    },
+    {
+      "id": "T18",
+      "title": "Strip unknown keys from submitted forms-data values",
+      "layer": "app",
+      "deps": [],
+      "acs": [],
+      "dod": "submit validation drops keys not declared in the schema before upsert, matching data-model.md's \"keyed like the schema's component ids\" contract; a test asserts unknown keys are dropped",
+      "files_hint": [
+        "server/api/src/app/forms-data/forms-data.validation.ts",
+        "server/api/src/app/forms-data/forms-data.validation.spec.ts"
+      ],
+      "origin": "review-2026-09-20"
+    },
+    {
+      "id": "T19",
+      "title": "Render Creator-configured textColor in Runtime form-viewer",
+      "layer": "ui",
+      "deps": ["T17"],
+      "acs": [],
+      "dod": "the resolved textColor config value is applied to the rendered item; a test asserts it",
+      "files_hint": [
+        "client/apps/runtime/src/app/form-viewer/form-viewer.html",
+        "client/apps/runtime/src/app/form-viewer/form-viewer.spec.ts"
+      ],
+      "origin": "review-2026-09-20"
     }
   ]
 }

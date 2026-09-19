@@ -307,6 +307,47 @@ describe('SchemasService', () => {
         mockSchema,
       );
     });
+
+    it('returns the published version snapshot, not a live draft edit made after publish', async () => {
+      const draftEditedAfterPublish = {
+        ...mockSchema,
+        schema: { properties: { broken: {} } },
+      };
+      const publishedSnapshot = {
+        ...mockVersion,
+        schema: { properties: { name: { type: 'string' } } },
+      };
+      db.query.schemas.findFirst.mockResolvedValue(draftEditedAfterPublish);
+      db.query.schemasVersions.findMany.mockResolvedValue([publishedSnapshot]);
+
+      const result = await service.findPublishedById(SCHEMA_ID);
+
+      expect(result.schema).toEqual(publishedSnapshot.schema);
+      expect(result.schema).not.toEqual(draftEditedAfterPublish.schema);
+    });
+
+    it('uses the most recently published version when multiple exist', async () => {
+      const older = {
+        ...mockVersion,
+        id: 'v1-id',
+        version: 'v1',
+        schema: { properties: { old: {} } },
+        publishedAt: new Date('2026-01-01'),
+      };
+      const newer = {
+        ...mockVersion,
+        id: 'v2-id',
+        version: 'v2',
+        schema: { properties: { fresh: {} } },
+        publishedAt: new Date('2026-02-01'),
+      };
+      db.query.schemas.findFirst.mockResolvedValue(mockSchema);
+      db.query.schemasVersions.findMany.mockResolvedValue([newer, older]);
+
+      const result = await service.findPublishedById(SCHEMA_ID);
+
+      expect(result.schema).toEqual(newer.schema);
+    });
   });
 
   // ── findVersions ──────────────────────────────────────────────────────────

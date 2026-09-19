@@ -1,4 +1,7 @@
-import { validateFormValues } from './forms-data.validation';
+import {
+  sanitizeFormValues,
+  validateFormValues,
+} from './forms-data.validation';
 
 const schema = {
   properties: {
@@ -40,5 +43,28 @@ describe('validateFormValues', () => {
 
   it('treats an empty schema as always valid', () => {
     expect(validateFormValues({}, { anything: 'goes' })).toEqual({});
+  });
+});
+
+describe('sanitizeFormValues', () => {
+  it('drops keys not declared in the schema', () => {
+    const result = sanitizeFormValues(schema, {
+      name: 'Alice',
+      role: 'admin',
+      evilPayload: 'x'.repeat(10_000),
+    });
+    expect(result).toEqual({ name: 'Alice', role: 'admin' });
+  });
+
+  it('keeps every key that is declared in the schema', () => {
+    const result = sanitizeFormValues(schema, {
+      name: 'Alice',
+      role: 'admin',
+    });
+    expect(result).toEqual({ name: 'Alice', role: 'admin' });
+  });
+
+  it('returns an empty object when the schema declares no properties', () => {
+    expect(sanitizeFormValues({}, { anything: 'goes' })).toEqual({});
   });
 });

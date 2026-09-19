@@ -124,6 +124,25 @@ describe('FormsDataController', () => {
         },
       );
     });
+
+    it('strips keys not declared in the schema before saving', async () => {
+      mockSchemasService.findPublishedById.mockResolvedValue(publishedSchema);
+      mockFormsDataService.submit.mockResolvedValue({
+        values: { name: 'Alice' },
+      });
+
+      await controller.submit(
+        SCHEMA_ID,
+        { values: { name: 'Alice', evilPayload: 'x'.repeat(10_000) } },
+        mockReq,
+      );
+
+      expect(mockFormsDataService.submit).toHaveBeenCalledWith(
+        SCHEMA_ID,
+        USER_ID,
+        { name: 'Alice' },
+      );
+    });
   });
 
   // ── remove ──────────────────────────────────────────────────────────────

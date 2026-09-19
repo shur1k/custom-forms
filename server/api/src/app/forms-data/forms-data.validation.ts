@@ -44,3 +44,19 @@ export function validateFormValues(
 
   return errors;
 }
+
+/**
+ * Drops keys not declared in the schema's field ids, per data-model.md's
+ * "keyed like the schema's component ids" contract for `forms_data.values`.
+ */
+export function sanitizeFormValues(
+  schema: FormSchema,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  values: Record<string, any>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Record<string, any> {
+  const allowedKeys = new Set(Object.keys(schema.properties ?? {}));
+  return Object.fromEntries(
+    Object.entries(values ?? {}).filter(([key]) => allowedKeys.has(key)),
+  );
+}

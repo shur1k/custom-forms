@@ -14,7 +14,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { SchemasService } from '../schemas/schemas.service';
 import { FormsDataService } from './forms-data.service';
 import { SubmitFormsDataDto } from './dto/submit-forms-data.dto';
-import { validateFormValues } from './forms-data.validation';
+import {
+  sanitizeFormValues,
+  validateFormValues,
+} from './forms-data.validation';
 
 type ReqUser = { user: { userId: string; role: string } };
 
@@ -49,12 +52,13 @@ export class FormsDataController {
   ) {
     const schema = await this.schemasService.findPublishedById(schemaId);
 
-    const errors = validateFormValues(schema.schema ?? {}, dto.values);
+    const values = sanitizeFormValues(schema.schema ?? {}, dto.values);
+    const errors = validateFormValues(schema.schema ?? {}, values);
     if (Object.keys(errors).length > 0) {
       throw new BadRequestException({ message: 'Validation failed', errors });
     }
 
-    return this.formsDataService.submit(schemaId, req.user.userId, dto.values);
+    return this.formsDataService.submit(schemaId, req.user.userId, values);
   }
 
   @Delete()

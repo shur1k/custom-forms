@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -36,7 +42,9 @@ export class Login {
 
   passwordError(): string | null {
     if (!this.submitted()) return null;
-    return this.form.controls.password.hasError('required') ? 'Password is required.' : null;
+    return this.form.controls.password.hasError('required')
+      ? 'Password is required.'
+      : null;
   }
 
   submit(): void {
@@ -47,8 +55,12 @@ export class Login {
 
     this.auth.login(this.form.getRawValue()).subscribe({
       next: () => this.router.navigate(['/']),
-      error: () => {
-        this.error.set('Invalid email or password.');
+      error: (err: HttpErrorResponse) => {
+        this.error.set(
+          err.status === 401
+            ? 'Invalid email or password.'
+            : 'Something went wrong. Please try again later.',
+        );
         this.loading.set(false);
       },
     });

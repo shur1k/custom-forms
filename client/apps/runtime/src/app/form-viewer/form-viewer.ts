@@ -25,6 +25,7 @@ import {
   TextArea,
 } from '@custom-forms/ui';
 import { StoredSchema } from '../form-schema.types';
+import { ItemErrorBoundary } from './item-error-boundary';
 
 export const GRID_COLS = 64;
 
@@ -63,7 +64,14 @@ type RenderResult =
   templateUrl: './form-viewer.html',
   styleUrl: './form-viewer.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Input, Select, TextArea, Button, ReactiveFormsModule],
+  imports: [
+    Input,
+    Select,
+    TextArea,
+    Button,
+    ReactiveFormsModule,
+    ItemErrorBoundary,
+  ],
 })
 export class FormViewer implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -200,11 +208,14 @@ export class FormViewer implements OnInit {
     row: number;
     w: number;
     h: number;
+    textColor?: string;
   }): Record<string, string> {
-    return {
+    const style: Record<string, string> = {
       'grid-column': `${view.col + 1} / span ${view.w}`,
       'grid-row': `${view.row + 1} / span ${view.h}`,
     };
+    if (view.textColor) style['color'] = view.textColor;
+    return style;
   }
 
   private resolveField(

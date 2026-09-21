@@ -1,9 +1,34 @@
 <div class="user-list">
   <h1 class="user-list__title">User Administration</h1>
-  @if (isPatching()) {
-    <div class="user-list__spinner-overlay">
-      <div class="user-list__spinner"></div>
-    </div>
+
+  <form
+    class="user-list__create-form"
+    [formGroup]="createForm"
+    (ngSubmit)="createUser()"
+  >
+    <lib-input
+      label="Email"
+      type="email"
+      placeholder="you@example.com"
+      formControlName="email"
+    />
+    <lib-input
+      label="Password"
+      type="password"
+      placeholder="Min. 8 characters"
+      formControlName="password"
+    />
+    <lib-select label="Role" [options]="roleOptions" formControlName="role" />
+    <lib-button type="submit" [disabled]="isCreating()">
+      {{ isCreating() ? 'Adding…' : 'Add user' }}
+    </lib-button>
+  </form>
+  @if (createError()) {
+  <p class="user-list__error">{{ createError() }}</p>
+  } @if (isPatching()) {
+  <div class="user-list__spinner-overlay">
+    <div class="user-list__spinner"></div>
+  </div>
   }
   <ag-grid-angular
     class="ag-theme-alpine user-list__grid"
@@ -13,5 +38,6 @@
     [getRowId]="getRowId"
     (gridReady)="onGridReady($event)"
     (cellValueChanged)="onCellValueChanged($event)"
+    (cellClicked)="onCellClicked($event)"
   />
 </div>

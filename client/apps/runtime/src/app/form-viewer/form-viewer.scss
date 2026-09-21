@@ -1,0 +1,48 @@
+.form-viewer {
+  padding: 16px;
+
+  &__grid {
+    display: grid;
+    grid-auto-rows: var(--cell-size, 40px);
+    gap: 4px;
+  }
+
+  &__item {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  &__item--error {
+    border: 1px dashed #d32f2f;
+    border-radius: 4px;
+    padding: 4px 8px;
+  }
+
+  &__error-placeholder {
+    color: #d32f2f;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  &__error {
+    color: #d32f2f;
+  }
+
+  &__field-error {
+    display: block;
+    color: #d32f2f;
+    font-size: 0.8rem;
+    margin-top: 2px;
+  }
+
+  &__submit-message {
+    margin-top: 12px;
+    font-weight: 500;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+}

@@ -8,6 +8,13 @@
       "when": 1774123602114,
       "tag": "0000_unknown_night_nurse",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789241442471,
+      "tag": "0001_old_maggott",
+      "breakpoints": true
     }
   ]
 }

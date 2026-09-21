@@ -1,0 +1,18 @@
+<div class="form-list">
+  <h1>Published forms</h1>
+
+  @if (isLoading()) {
+  <p>Loading…</p>
+  } @else if (forms().length === 0) {
+  <p>No published forms available yet.</p>
+  } @else {
+  <ul class="form-list__items">
+    @for (form of forms(); track form.id) {
+    <li class="form-list__item">
+      <span class="form-list__title">{{ form.title }}</span>
+      <lib-button (clicked)="openForm(form.id)">Open</lib-button>
+    </li>
+    }
+  </ul>
+  }
+</div>

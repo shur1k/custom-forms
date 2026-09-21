@@ -45,20 +45,36 @@
     display: inline-flex;
     align-items: center;
 
-    &:disabled { opacity: 0.5; cursor: not-allowed; }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     &--primary {
       background: var(--cf-color-primary);
       color: #fff;
-      &:hover:not(:disabled) { opacity: 0.9; }
+      &:hover:not(:disabled) {
+        opacity: 0.9;
+      }
     }
 
     &--secondary {
       background: transparent;
       border: 1px solid var(--cf-color-border);
       color: var(--cf-color-text);
-      &:hover { background: var(--cf-color-bg-subtle); }
+      &:hover {
+        background: var(--cf-color-bg-subtle);
+      }
     }
+  }
+
+  &__publish-error {
+    margin: 0;
+    padding: var(--cf-space-2) var(--cf-space-6);
+    font-size: var(--cf-text-sm);
+    color: var(--cf-color-danger-text);
+    background: var(--cf-color-bg);
+    border-bottom: 1px solid var(--cf-color-border);
   }
 
   &__loading {

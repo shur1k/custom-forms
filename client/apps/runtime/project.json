@@ -53,9 +53,7 @@
     },
     "esbuild": {
       "executor": "@angular/build:application",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/client/apps/runtime",
         "browser": "client/apps/runtime/src/main.ts",
@@ -67,15 +65,17 @@
             "input": "client/apps/runtime/public"
           }
         ],
-        "styles": [
-          "client/apps/runtime/src/styles.scss"
-        ],
-        "polyfills": [
-          "es-module-shims"
-        ]
+        "styles": ["client/apps/runtime/src/styles.scss"],
+        "polyfills": ["es-module-shims"]
       },
       "configurations": {
         "production": {
+          "fileReplacements": [
+            {
+              "replace": "client/apps/runtime/src/environments/environment.ts",
+              "with": "client/apps/runtime/src/environments/environment.production.ts"
+            }
+          ],
           "budgets": [
             {
               "type": "initial",

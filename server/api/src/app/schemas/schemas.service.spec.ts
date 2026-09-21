@@ -4,20 +4,41 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { SchemasService } from './schemas.service';
 import { DRIZZLE_DB } from '../drizzle/drizzle.module';
 
-const OWNER_ID   = 'owner-uuid';
-const OTHER_ID   = 'other-uuid';
-const SCHEMA_ID  = 'schema-uuid';
-const TYPE_ID    = 'type-uuid';
+const OWNER_ID = 'owner-uuid';
+const OTHER_ID = 'other-uuid';
+const SCHEMA_ID = 'schema-uuid';
+const TYPE_ID = 'type-uuid';
 const VERSION_ID = 'version-uuid';
 
-const mockType    = { id: TYPE_ID, name: 'form', description: 'Form', createdAt: new Date() };
-const mockSchema  = { id: SCHEMA_ID, ownerId: OWNER_ID, typeId: TYPE_ID, title: 'My Form', slug: null, schema: {}, createdAt: new Date(), updatedAt: new Date(), type: mockType };
-const mockVersion = { id: VERSION_ID, schemaId: SCHEMA_ID, version: 'v1', schema: {}, publishedAt: new Date() };
+const mockType = {
+  id: TYPE_ID,
+  name: 'form',
+  description: 'Form',
+  createdAt: new Date(),
+};
+const mockSchema = {
+  id: SCHEMA_ID,
+  ownerId: OWNER_ID,
+  typeId: TYPE_ID,
+  title: 'My Form',
+  slug: null,
+  schema: {},
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  type: mockType,
+};
+const mockVersion = {
+  id: VERSION_ID,
+  schemaId: SCHEMA_ID,
+  version: 'v1',
+  schema: {},
+  publishedAt: new Date(),
+};
 
 const buildDbMock = () => ({
   query: {
-    schemasTypes:    { findFirst: jest.fn() },
-    schemas:         { findFirst: jest.fn(), findMany: jest.fn() },
+    schemasTypes: { findFirst: jest.fn() },
+    schemas: { findFirst: jest.fn(), findMany: jest.fn() },
     schemasVersions: { findMany: jest.fn() },
   },
   insert: jest.fn(),
@@ -42,17 +63,23 @@ describe('SchemasService', () => {
     it('creates and returns a schema', async () => {
       db.query.schemasTypes.findFirst.mockResolvedValue(mockType);
       db.insert.mockReturnValue({
-        values: jest.fn().mockReturnValue({ returning: jest.fn().mockResolvedValue([mockSchema]) }),
+        values: jest.fn().mockReturnValue({
+          returning: jest.fn().mockResolvedValue([mockSchema]),
+        }),
       });
 
-      const result = await service.create({ title: 'My Form', type: 'form' }, OWNER_ID);
+      const result = await service.create(
+        { title: 'My Form', type: 'form' },
+        OWNER_ID,
+      );
       expect(result).toEqual(mockSchema);
     });
 
     it('throws NotFoundException for unknown type', async () => {
       db.query.schemasTypes.findFirst.mockResolvedValue(null);
-      await expect(service.create({ title: 'X', type: 'form' }, OWNER_ID))
-        .rejects.toThrow(NotFoundException);
+      await expect(
+        service.create({ title: 'X', type: 'form' }, OWNER_ID),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -63,7 +90,11 @@ describe('SchemasService', () => {
       const result = await service.findAll(1, 20, OWNER_ID, 'user');
       expect(result).toEqual([mockSchema]);
       expect(db.query.schemas.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ limit: 20, offset: 0, where: expect.anything() }),
+        expect.objectContaining({
+          limit: 20,
+          offset: 0,
+          where: expect.anything(),
+        }),
       );
     });
 
@@ -79,7 +110,9 @@ describe('SchemasService', () => {
       db.query.schemas.findMany.mockResolvedValue([mockSchema]);
       await service.findAll(1, 20, 'any-id', 'superuser');
       expect(db.query.schemas.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ with: expect.objectContaining({ owner: expect.anything() }) }),
+        expect.objectContaining({
+          with: expect.objectContaining({ owner: expect.anything() }),
+        }),
       );
     });
 
@@ -102,22 +135,30 @@ describe('SchemasService', () => {
 
     it('throws NotFoundException when not found', async () => {
       db.query.schemas.findFirst.mockResolvedValue(null);
-      await expect(service.findOne('no-such-id')).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('no-such-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('throws ForbiddenException when non-superuser requests another owners schema', async () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema); // ownerId = OWNER_ID
-      await expect(service.findOne(SCHEMA_ID, OTHER_ID, 'user')).rejects.toThrow(ForbiddenException);
+      await expect(
+        service.findOne(SCHEMA_ID, OTHER_ID, 'user'),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it('superuser can read any schema regardless of owner', async () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
-      await expect(service.findOne(SCHEMA_ID, OTHER_ID, 'superuser')).resolves.toEqual(mockSchema);
+      await expect(
+        service.findOne(SCHEMA_ID, OTHER_ID, 'superuser'),
+      ).resolves.toEqual(mockSchema);
     });
 
     it('owner can read their own schema', async () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
-      await expect(service.findOne(SCHEMA_ID, OWNER_ID, 'user')).resolves.toEqual(mockSchema);
+      await expect(
+        service.findOne(SCHEMA_ID, OWNER_ID, 'user'),
+      ).resolves.toEqual(mockSchema);
     });
   });
 
@@ -128,24 +169,32 @@ describe('SchemasService', () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
       db.update.mockReturnValue({
         set: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({ returning: jest.fn().mockResolvedValue([updated]) }),
+          where: jest.fn().mockReturnValue({
+            returning: jest.fn().mockResolvedValue([updated]),
+          }),
         }),
       });
 
-      const result = await service.update(SCHEMA_ID, { title: 'New Title' }, OWNER_ID);
+      const result = await service.update(
+        SCHEMA_ID,
+        { title: 'New Title' },
+        OWNER_ID,
+      );
       expect(result).toEqual(updated);
     });
 
     it('throws ForbiddenException when caller is not the owner', async () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
-      await expect(service.update(SCHEMA_ID, { title: 'X' }, OTHER_ID))
-        .rejects.toThrow(ForbiddenException);
+      await expect(
+        service.update(SCHEMA_ID, { title: 'X' }, OTHER_ID),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it('throws NotFoundException when schema does not exist', async () => {
       db.query.schemas.findFirst.mockResolvedValue(null);
-      await expect(service.update('bad-id', { title: 'X' }, OWNER_ID))
-        .rejects.toThrow(NotFoundException);
+      await expect(
+        service.update('bad-id', { title: 'X' }, OWNER_ID),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -153,14 +202,20 @@ describe('SchemasService', () => {
   describe('remove', () => {
     it('deletes the schema when owner matches', async () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
-      db.delete.mockReturnValue({ where: jest.fn().mockResolvedValue(undefined) });
+      db.delete.mockReturnValue({
+        where: jest.fn().mockResolvedValue(undefined),
+      });
 
-      await expect(service.remove(SCHEMA_ID, OWNER_ID)).resolves.toBeUndefined();
+      await expect(
+        service.remove(SCHEMA_ID, OWNER_ID),
+      ).resolves.toBeUndefined();
     });
 
     it('throws ForbiddenException when caller is not the owner', async () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
-      await expect(service.remove(SCHEMA_ID, OTHER_ID)).rejects.toThrow(ForbiddenException);
+      await expect(service.remove(SCHEMA_ID, OTHER_ID)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -170,7 +225,9 @@ describe('SchemasService', () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
       db.query.schemasVersions.findMany.mockResolvedValue([]);
       db.insert.mockReturnValue({
-        values: jest.fn().mockReturnValue({ returning: jest.fn().mockResolvedValue([mockVersion]) }),
+        values: jest.fn().mockReturnValue({
+          returning: jest.fn().mockResolvedValue([mockVersion]),
+        }),
       });
 
       const result = await service.publish(SCHEMA_ID, OWNER_ID);
@@ -182,17 +239,114 @@ describe('SchemasService', () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
       db.query.schemasVersions.findMany.mockResolvedValue([mockVersion]);
       const v2 = { ...mockVersion, version: 'v2' };
-      const valuesMock = jest.fn().mockReturnValue({ returning: jest.fn().mockResolvedValue([v2]) });
+      const valuesMock = jest
+        .fn()
+        .mockReturnValue({ returning: jest.fn().mockResolvedValue([v2]) });
       db.insert.mockReturnValue({ values: valuesMock });
 
       const result = await service.publish(SCHEMA_ID, OWNER_ID);
       expect(result.version).toBe('v2');
-      expect(valuesMock).toHaveBeenCalledWith(expect.objectContaining({ version: 'v2' }));
+      expect(valuesMock).toHaveBeenCalledWith(
+        expect.objectContaining({ version: 'v2' }),
+      );
     });
 
     it('throws ForbiddenException when caller is not the owner', async () => {
       db.query.schemas.findFirst.mockResolvedValue(mockSchema);
-      await expect(service.publish(SCHEMA_ID, OTHER_ID)).rejects.toThrow(ForbiddenException);
+      await expect(service.publish(SCHEMA_ID, OTHER_ID)).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+  });
+
+  // ── listPublished ─────────────────────────────────────────────────────────
+  describe('listPublished', () => {
+    it('returns only schemas that have at least one published version', async () => {
+      const draft = { ...mockSchema, id: 'draft-uuid', versions: [] };
+      const published = {
+        ...mockSchema,
+        id: 'published-uuid',
+        versions: [mockVersion],
+      };
+      db.query.schemas.findMany.mockResolvedValue([draft, published]);
+
+      const result = await service.listPublished();
+
+      expect(result).toEqual([published]);
+    });
+
+    it('returns an empty list when no schema is published', async () => {
+      db.query.schemas.findMany.mockResolvedValue([
+        { ...mockSchema, versions: [] },
+      ]);
+      await expect(service.listPublished()).resolves.toEqual([]);
+    });
+  });
+
+  // ── findPublishedById ─────────────────────────────────────────────────────
+  describe('findPublishedById', () => {
+    it('throws NotFoundException when the schema does not exist', async () => {
+      db.query.schemas.findFirst.mockResolvedValue(null);
+      await expect(service.findPublishedById('no-such-id')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('throws NotFoundException when the schema has never been published', async () => {
+      db.query.schemas.findFirst.mockResolvedValue(mockSchema);
+      db.query.schemasVersions.findMany.mockResolvedValue([]);
+      await expect(service.findPublishedById(SCHEMA_ID)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('resolves the schema when it has at least one published version', async () => {
+      db.query.schemas.findFirst.mockResolvedValue(mockSchema);
+      db.query.schemasVersions.findMany.mockResolvedValue([mockVersion]);
+      await expect(service.findPublishedById(SCHEMA_ID)).resolves.toEqual(
+        mockSchema,
+      );
+    });
+
+    it('returns the published version snapshot, not a live draft edit made after publish', async () => {
+      const draftEditedAfterPublish = {
+        ...mockSchema,
+        schema: { properties: { broken: {} } },
+      };
+      const publishedSnapshot = {
+        ...mockVersion,
+        schema: { properties: { name: { type: 'string' } } },
+      };
+      db.query.schemas.findFirst.mockResolvedValue(draftEditedAfterPublish);
+      db.query.schemasVersions.findMany.mockResolvedValue([publishedSnapshot]);
+
+      const result = await service.findPublishedById(SCHEMA_ID);
+
+      expect(result.schema).toEqual(publishedSnapshot.schema);
+      expect(result.schema).not.toEqual(draftEditedAfterPublish.schema);
+    });
+
+    it('uses the most recently published version when multiple exist', async () => {
+      const older = {
+        ...mockVersion,
+        id: 'v1-id',
+        version: 'v1',
+        schema: { properties: { old: {} } },
+        publishedAt: new Date('2026-01-01'),
+      };
+      const newer = {
+        ...mockVersion,
+        id: 'v2-id',
+        version: 'v2',
+        schema: { properties: { fresh: {} } },
+        publishedAt: new Date('2026-02-01'),
+      };
+      db.query.schemas.findFirst.mockResolvedValue(mockSchema);
+      db.query.schemasVersions.findMany.mockResolvedValue([newer, older]);
+
+      const result = await service.findPublishedById(SCHEMA_ID);
+
+      expect(result.schema).toEqual(newer.schema);
     });
   });
 
@@ -208,7 +362,9 @@ describe('SchemasService', () => {
 
     it('throws NotFoundException when schema does not exist', async () => {
       db.query.schemas.findFirst.mockResolvedValue(null);
-      await expect(service.findVersions('bad-id')).rejects.toThrow(NotFoundException);
+      await expect(service.findVersions('bad-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

@@ -46,3 +46,12 @@ export interface UpdateSchemaDto {
   /** @example "my-updated-form" */
   slug?: string;
 }
+
+export interface SubmitFormsDataDto {
+  /** The submitted field values, keyed by the schema's component ids */
+  values: object;
+}
+
+export interface UpdateRoleDto {
+  role: "user" | "admin" | "superuser";
+}

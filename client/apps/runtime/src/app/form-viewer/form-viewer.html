@@ -1,0 +1,61 @@
+<div class="form-viewer">
+  @if (isLoading()) {
+  <p>Loading…</p>
+  } @else if (loadError()) {
+  <p class="form-viewer__error">{{ loadError() }}</p>
+  } @else {
+  <div
+    class="form-viewer__grid"
+    #gridEl
+    [style.grid-template-columns]="'repeat(' + gridCols + ', 1fr)'"
+    [style.--cell-size.px]="cellSize()"
+  >
+    @for (item of renderItems(); track item.id) { @if (item.ok) {
+    <div class="form-viewer__item" [style]="itemStyle(item.view)">
+      <cf-item-error-boundary>
+        @switch (item.view.kind) { @case ('input') {
+        <lib-input
+          [label]="item.view.showTitle ? item.view.label : ''"
+          [error]="fieldError(item.id)"
+          [formControl]="form.controls[item.id]"
+        />
+        } @case ('select') {
+        <lib-select
+          [label]="item.view.showTitle ? item.view.label : ''"
+          [options]="item.view.options"
+          [formControl]="form.controls[item.id]"
+        />
+        @if (fieldError(item.id)) {
+        <span class="form-viewer__field-error">{{ fieldError(item.id) }}</span>
+        } } @case ('text-area') {
+        <lib-text-area
+          [label]="item.view.showTitle ? item.view.label : ''"
+          [error]="fieldError(item.id)"
+          [formControl]="form.controls[item.id]"
+        />
+        } @case ('button') {
+        <lib-button [disabled]="item.view.disabled" (clicked)="onSubmitClick()"
+          >{{ item.view.label }}</lib-button
+        >
+        } }
+      </cf-item-error-boundary>
+    </div>
+    } @else {
+    <div class="form-viewer__item form-viewer__item--error">
+      <p class="form-viewer__error-placeholder">⚠ {{ item.errorMessage }}</p>
+    </div>
+    } }
+  </div>
+
+  @if (submitMessage()) {
+  <p class="form-viewer__submit-message">{{ submitMessage() }}</p>
+  }
+
+  <div class="form-viewer__actions">
+    <lib-button (clicked)="onSubmitClick()">Save</lib-button>
+    <lib-button variant="secondary" (clicked)="onDeleteClick()"
+      >Delete my data</lib-button
+    >
+  </div>
+  }
+</div>

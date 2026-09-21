@@ -1,6 +1,9 @@
 <div class="editor">
   <div class="editor__toolbar">
-    <span class="editor__title">{{ formTitle() }} <span class="editor__type">({{ formType() }})</span></span>
+    <span class="editor__title"
+      >{{ formTitle() }}
+      <span class="editor__type">({{ formType() }})</span></span
+    >
     <div class="editor__toolbar-actions">
       <a class="editor__btn editor__btn--secondary" [routerLink]="['../']">
         Close
@@ -16,31 +19,41 @@
       >
         {{ isSaving() ? 'Saving…' : 'Save' }}
       </button>
+      <button
+        class="editor__btn editor__btn--primary"
+        type="button"
+        [disabled]="isPublishing()"
+        (click)="publish()"
+      >
+        {{ isPublishing() ? 'Publishing…' : 'Publish' }}
+      </button>
     </div>
   </div>
 
-  @if (isLoading()) {
-    <div class="editor__loading">Loading…</div>
+  @if (publishError()) {
+  <p class="editor__publish-error">{{ publishError() }}</p>
+  } @if (isLoading()) {
+  <div class="editor__loading">Loading…</div>
   } @else {
-    <div class="editor__body">
-      <cf-component-palette class="editor__palette" />
+  <div class="editor__body">
+    <cf-component-palette class="editor__palette" />
 
-      <cf-canvas
-        class="editor__canvas"
-        [components]="components()"
-        [selectedId]="selectedId()"
-        (componentDropped)="onComponentDropped($event)"
-        (componentMoved)="onComponentMoved($event)"
-        (componentResized)="onComponentResized($event)"
-        (componentRemoved)="onComponentRemoved($event)"
-        (componentSelected)="onComponentSelected($event)"
-      />
+    <cf-canvas
+      class="editor__canvas"
+      [components]="components()"
+      [selectedId]="selectedId()"
+      (componentDropped)="onComponentDropped($event)"
+      (componentMoved)="onComponentMoved($event)"
+      (componentResized)="onComponentResized($event)"
+      (componentRemoved)="onComponentRemoved($event)"
+      (componentSelected)="onComponentSelected($event)"
+    />
 
-      <cf-properties-panel
-        class="editor__props"
-        [component]="selectedComp()"
-        (propsChanged)="onPropsChanged($event)"
-      />
-    </div>
+    <cf-properties-panel
+      class="editor__props"
+      [component]="selectedComp()"
+      (propsChanged)="onPropsChanged($event)"
+    />
+  </div>
   }
 </div>

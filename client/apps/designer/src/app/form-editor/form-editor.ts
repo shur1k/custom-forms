@@ -1,13 +1,25 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BaseHttpService } from '@custom-forms/http';
 import { ComponentPalette } from './component-palette/component-palette';
 import { Canvas } from './canvas/canvas';
 import { PropertiesPanel } from './properties-panel/properties-panel';
 import {
-  ComponentDef, SchemaRow,
-  asCol, asColSpan, asRow, asRowSpan,
-  schemaToComponents, componentsToSchema,
+  ComponentDef,
+  SchemaRow,
+  asCol,
+  asColSpan,
+  asRow,
+  asRowSpan,
+  schemaToComponents,
+  componentsToSchema,
 } from '../form-schema.types';
 
 @Component({
@@ -18,20 +30,22 @@ import {
   imports: [ComponentPalette, Canvas, PropertiesPanel, RouterLink],
 })
 export class FormEditor implements OnInit {
-  private readonly http  = inject(BaseHttpService);
+  private readonly http = inject(BaseHttpService);
   private readonly route = inject(ActivatedRoute);
-  private readonly id    = this.route.snapshot.paramMap.get('id')!;
-  private readonly api   = `/schemas/${this.id}`;
+  private readonly id = this.route.snapshot.paramMap.get('id')!;
+  private readonly api = `/schemas/${this.id}`;
 
   readonly components = signal<ComponentDef[]>([]);
-  readonly formTitle  = signal('');
-  readonly formType   = signal('');
-  readonly isLoading  = signal(false);
-  readonly isSaving   = signal(false);
+  readonly formTitle = signal('');
+  readonly formType = signal('');
+  readonly isLoading = signal(false);
+  readonly isSaving = signal(false);
+  readonly isPublishing = signal(false);
+  readonly publishError = signal<string | null>(null);
   readonly selectedId = signal<string | null>(null);
 
-  readonly selectedComp = computed(() =>
-    this.components().find((c) => c.id === this.selectedId()) ?? null
+  readonly selectedComp = computed(
+    () => this.components().find((c) => c.id === this.selectedId()) ?? null,
   );
 
   ngOnInit(): void {
@@ -56,21 +70,41 @@ export class FormEditor implements OnInit {
     });
   }
 
+  publish(): void {
+    this.isPublishing.set(true);
+    this.publishError.set(null);
+    this.http.post(`${this.api}/publish`, {}).subscribe({
+      next: () => this.isPublishing.set(false),
+      error: () => {
+        this.publishError.set('Publish failed. Please try again.');
+        this.isPublishing.set(false);
+      },
+    });
+  }
+
   onComponentDropped(def: ComponentDef): void {
     this.components.update((cs) => [...cs, def]);
     this.selectedId.set(def.id);
   }
 
   onComponentMoved(event: { id: string; col: number; row: number }): void {
-    this.components.update((cs) => cs.map((c) =>
-      c.id === event.id ? { ...c, col: asCol(event.col), row: asRow(event.row) } : c
-    ));
+    this.components.update((cs) =>
+      cs.map((c) =>
+        c.id === event.id
+          ? { ...c, col: asCol(event.col), row: asRow(event.row) }
+          : c,
+      ),
+    );
   }
 
   onComponentResized(event: { id: string; w: number; h: number }): void {
-    this.components.update((cs) => cs.map((c) =>
-      c.id === event.id ? { ...c, w: asColSpan(event.w), h: asRowSpan(event.h) } : c
-    ));
+    this.components.update((cs) =>
+      cs.map((c) =>
+        c.id === event.id
+          ? { ...c, w: asColSpan(event.w), h: asRowSpan(event.h) }
+          : c,
+      ),
+    );
   }
 
   onComponentRemoved(id: string): void {
@@ -83,6 +117,8 @@ export class FormEditor implements OnInit {
   }
 
   onPropsChanged(updated: ComponentDef): void {
-    this.components.update((cs) => cs.map((c) => (c.id === updated.id ? updated : c)));
+    this.components.update((cs) =>
+      cs.map((c) => (c.id === updated.id ? updated : c)),
+    );
   }
 }

@@ -51,6 +51,7 @@ export class FormList implements OnInit {
   readonly newType = signal<'form' | 'page' | 'dashboard'>('form');
   readonly isCreating = signal(false);
   readonly deleteTargetId = signal<string | null>(null);
+  readonly publishMessage = signal<string | null>(null);
 
   readonly typeOptions = TYPE_OPTIONS;
 
@@ -73,7 +74,7 @@ export class FormList implements OnInit {
       sortable: false,
       filter: false,
       cellRenderer: () =>
-        '<button class="edit-btn">Edit</button><button class="delete-btn">Delete</button>',
+        '<button class="edit-btn">Edit</button><button class="publish-btn">Publish</button><button class="delete-btn">Delete</button>',
     },
   ]);
 
@@ -98,7 +99,12 @@ export class FormList implements OnInit {
 
   onRowClicked(event: RowClickedEvent<SchemaRow>): void {
     const target = event.event?.target as HTMLElement;
-    if (target?.closest('.delete-btn') || target?.closest('.edit-btn')) return;
+    if (
+      target?.closest('.delete-btn') ||
+      target?.closest('.edit-btn') ||
+      target?.closest('.publish-btn')
+    )
+      return;
     this.openEditor(event.data!.id);
   }
 
@@ -109,7 +115,17 @@ export class FormList implements OnInit {
       this.requestDelete(event.data!.id);
     } else if (target?.classList.contains('edit-btn')) {
       this.openEditor(event.data!.id);
+    } else if (target?.classList.contains('publish-btn')) {
+      this.publish(event.data!.id);
     }
+  }
+
+  publish(id: string): void {
+    this.publishMessage.set(null);
+    this.http.post(`/schemas/${id}/publish`, {}).subscribe({
+      next: () => this.publishMessage.set('Form published.'),
+      error: () => this.publishMessage.set('Publish failed. Please try again.'),
+    });
   }
 
   private openEditor(id: string): void {

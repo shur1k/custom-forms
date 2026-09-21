@@ -39,6 +39,12 @@
     cursor: pointer;
   }
 
+  &__publish-message {
+    margin: 0 0 var(--cf-space-4);
+    font-size: var(--cf-text-sm);
+    color: var(--cf-color-text-muted);
+  }
+
   &__spinner-overlay {
     position: absolute;
     inset: 0;
@@ -187,6 +193,21 @@
 
   &:hover {
     background: #eff6ff;
+  }
+}
+
+:global(.publish-btn) {
+  padding: 2px 8px;
+  margin-right: 4px;
+  font-size: 12px;
+  border: 1px solid #16a34a;
+  color: #16a34a;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f0fdf4;
   }
 }
 

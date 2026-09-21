@@ -6,7 +6,9 @@
   } @else {
   <div
     class="form-viewer__grid"
+    #gridEl
     [style.grid-template-columns]="'repeat(' + gridCols + ', 1fr)'"
+    [style.--cell-size.px]="cellSize()"
   >
     @for (item of renderItems(); track item.id) { @if (item.ok) {
     <div class="form-viewer__item" [style]="itemStyle(item.view)">

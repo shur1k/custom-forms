@@ -3,7 +3,7 @@
 
   &__grid {
     display: grid;
-    grid-auto-rows: 40px;
+    grid-auto-rows: var(--cell-size, 40px);
     gap: 4px;
   }
 

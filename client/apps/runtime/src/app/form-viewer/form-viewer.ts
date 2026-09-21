@@ -3,9 +3,11 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
   inject,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import {
   FormControl,
@@ -85,6 +87,12 @@ export class FormViewer implements OnInit {
   readonly submitMessage = signal<string | null>(null);
 
   readonly gridCols = GRID_COLS;
+  readonly gridRef = viewChild<ElementRef<HTMLDivElement>>('gridEl');
+
+  /** Row height in px, kept equal to the column width — mirrors Designer's
+   * canvas so a component's stored (row, h) renders at the same relative
+   * position it had when it was placed. */
+  readonly cellSize = signal(40);
 
   form = new FormGroup<Record<string, FormControl<string>>>({});
 
@@ -103,6 +111,19 @@ export class FormViewer implements OnInit {
   });
 
   constructor() {
+    effect((onCleanup) => {
+      const gridEl = this.gridRef()?.nativeElement;
+      if (!gridEl) return;
+
+      const updateCellSize = (): void =>
+        this.cellSize.set(gridEl.getBoundingClientRect().width / GRID_COLS);
+      updateCellSize();
+
+      const observer = new ResizeObserver(updateCellSize);
+      observer.observe(gridEl);
+      onCleanup(() => observer.disconnect());
+    });
+
     effect(() => {
       const controls = this.buildControls(this.renderItems());
       const prior = this.priorValues();

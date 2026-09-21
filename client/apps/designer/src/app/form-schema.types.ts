@@ -13,11 +13,17 @@ export const asColSpan = (n: number): ColSpan => n as ColSpan;
 export const asRow = (n: number): RowIndex => n as RowIndex;
 export const asRowSpan = (n: number): RowSpan => n as RowSpan;
 
+export interface SelectChoice {
+  value: string;
+  label: string;
+}
+
 export interface ComponentProps {
   label: string;
   showTitle: boolean;
   disabled: boolean;
   textColor: string;
+  choices: SelectChoice[];
 }
 
 export interface ComponentDef {
@@ -64,6 +70,7 @@ export interface StoredSchema {
       type: 'string';
       title: string;
       enum?: string[];
+      'x-enum-labels'?: string[];
       'x-ui': XUi;
     }
   >;
@@ -93,6 +100,10 @@ export function schemaToComponents(
         showTitle: ui.showTitle ?? true,
         disabled: ui.disabled ?? false,
         textColor: ui.textColor ?? '#000000',
+        choices: (prop.enum ?? []).map((value, i) => ({
+          value,
+          label: prop['x-enum-labels']?.[i] ?? value,
+        })),
       },
     });
   }
@@ -110,6 +121,7 @@ export function schemaToComponents(
         showTitle: true,
         disabled: action.disabled ?? false,
         textColor: action.textColor ?? '#000000',
+        choices: [],
       },
     });
   }
@@ -138,10 +150,16 @@ export function componentsToSchema(
         textColor: comp.props.textColor,
       });
     } else {
+      const choices = comp.props.choices.filter((c) => c.value.trim() !== '');
       properties[comp.id] = {
         type: 'string',
         title: comp.props.label,
-        ...(comp.type === 'select' ? { enum: [] } : {}),
+        ...(comp.type === 'select'
+          ? {
+              enum: choices.map((c) => c.value),
+              'x-enum-labels': choices.map((c) => c.label || c.value),
+            }
+          : {}),
         'x-ui': {
           component: comp.type,
           col: comp.col,

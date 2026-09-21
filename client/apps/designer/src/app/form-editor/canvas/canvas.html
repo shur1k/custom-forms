@@ -39,7 +39,11 @@
       <label class="canvas__field-label">{{ comp.props.label }}</label>
       }
       <select class="canvas__field-select" disabled>
+        @if (comp.props.choices.length === 0) {
         <option>{{ comp.props.label }}</option>
+        } @else { @for (choice of comp.props.choices; track $index) {
+        <option>{{ choice.label || choice.value }}</option>
+        } }
       </select>
     </div>
     } @case ('button') {

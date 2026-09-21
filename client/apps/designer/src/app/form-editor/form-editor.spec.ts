@@ -1,16 +1,26 @@
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 
 import { API_BASE_URL } from '@custom-forms/http';
 import { FormEditor } from './form-editor';
-import { ComponentDef, asCol, asColSpan, asRow, asRowSpan, componentsToSchema } from '../form-schema.types';
+import {
+  ComponentDef,
+  asCol,
+  asColSpan,
+  asRow,
+  asRowSpan,
+  componentsToSchema,
+} from '../form-schema.types';
 
 const SCHEMA_ID = 'form-123';
-const BASE      = 'http://test.example.com/api';
-const API       = `${BASE}/schemas/${SCHEMA_ID}`;
+const BASE = 'http://test.example.com/api';
+const API = `${BASE}/schemas/${SCHEMA_ID}`;
 
 const makeComp = (overrides: Partial<ComponentDef> = {}): ComponentDef => ({
   id: 'comp-1',
@@ -19,7 +29,13 @@ const makeComp = (overrides: Partial<ComponentDef> = {}): ComponentDef => ({
   row: asRow(0),
   w: asColSpan(3),
   h: asRowSpan(1),
-  props: { label: 'Input', showTitle: true, disabled: false, textColor: '#000000' },
+  props: {
+    label: 'Input',
+    showTitle: true,
+    disabled: false,
+    textColor: '#000000',
+    choices: [],
+  },
   ...overrides,
 });
 
@@ -74,7 +90,9 @@ describe('FormEditor', () => {
 
     component.save();
     const req = http.expectOne({ method: 'PATCH', url: API });
-    expect(req.request.body).toEqual({ schema: componentsToSchema([], 'Test Form') });
+    expect(req.request.body).toEqual({
+      schema: componentsToSchema([], 'Test Form'),
+    });
     req.flush({});
 
     expect(component.isSaving()).toBe(false);
@@ -150,7 +168,15 @@ describe('FormEditor', () => {
     fixture.detectChanges();
     http.expectOne(API).flush({ ...mockSchemaRow, schema: storedSchema });
 
-    const updated = makeComp({ props: { label: 'Updated', showTitle: false, disabled: true, textColor: '#ef4444' } });
+    const updated = makeComp({
+      props: {
+        label: 'Updated',
+        showTitle: false,
+        disabled: true,
+        textColor: '#ef4444',
+        choices: [],
+      },
+    });
     component.onPropsChanged(updated);
 
     expect(component.components()[0].props.label).toBe('Updated');

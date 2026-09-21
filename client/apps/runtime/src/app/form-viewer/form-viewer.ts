@@ -269,7 +269,10 @@ export class FormViewer implements OnInit {
           row: ui.row,
           w: ui.w,
           h: ui.h,
-          options: (prop.enum ?? []).map((value) => ({ value, label: value })),
+          options: (prop.enum ?? []).map((value, i) => ({
+            value,
+            label: prop['x-enum-labels']?.[i] ?? value,
+          })),
         },
       };
     } catch (err) {

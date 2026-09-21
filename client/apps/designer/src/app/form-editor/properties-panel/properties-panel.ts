@@ -1,6 +1,15 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { ComponentDef, ComponentProps } from '../../form-schema.types';
+import {
+  ComponentDef,
+  ComponentProps,
+  SelectChoice,
+} from '../../form-schema.types';
 
 interface ColorOption {
   value: string;
@@ -15,7 +24,7 @@ interface ColorOption {
   imports: [TitleCasePipe],
 })
 export class PropertiesPanel {
-  readonly component   = input<ComponentDef | null>(null);
+  readonly component = input<ComponentDef | null>(null);
   readonly propsChanged = output<ComponentDef>();
 
   readonly colorOptions: ColorOption[] = [
@@ -26,7 +35,10 @@ export class PropertiesPanel {
     { value: '#f59e0b', label: 'Amber' },
   ];
 
-  updateProp<K extends keyof ComponentProps>(key: K, value: ComponentProps[K]): void {
+  updateProp<K extends keyof ComponentProps>(
+    key: K,
+    value: ComponentProps[K],
+  ): void {
     const comp = this.component();
     if (!comp) return;
     this.propsChanged.emit({ ...comp, props: { ...comp.props, [key]: value } });
@@ -36,5 +48,31 @@ export class PropertiesPanel {
     const comp = this.component();
     if (!comp) return;
     this.propsChanged.emit({ ...comp, [key]: value } as ComponentDef);
+  }
+
+  addChoice(): void {
+    const comp = this.component();
+    if (!comp) return;
+    const choices: SelectChoice[] = [
+      ...comp.props.choices,
+      { value: '', label: '' },
+    ];
+    this.propsChanged.emit({ ...comp, props: { ...comp.props, choices } });
+  }
+
+  removeChoice(index: number): void {
+    const comp = this.component();
+    if (!comp) return;
+    const choices = comp.props.choices.filter((_, i) => i !== index);
+    this.propsChanged.emit({ ...comp, props: { ...comp.props, choices } });
+  }
+
+  updateChoice(index: number, key: keyof SelectChoice, value: string): void {
+    const comp = this.component();
+    if (!comp) return;
+    const choices = comp.props.choices.map((choice, i) =>
+      i === index ? { ...choice, [key]: value } : choice,
+    );
+    this.propsChanged.emit({ ...comp, props: { ...comp.props, choices } });
   }
 }

@@ -28,14 +28,18 @@ describe('Select', () => {
   it('shows label text when label input is provided', () => {
     fixture.componentRef.setInput('label', 'Role');
     fixture.detectChanges();
-    const span = fixture.nativeElement.querySelector('.select__label-text') as HTMLElement;
+    const span = fixture.nativeElement.querySelector(
+      '.select__label-text',
+    ) as HTMLElement;
     expect(span.textContent?.trim()).toBe('Role');
   });
 
   it('hides label span when label is empty', () => {
     fixture.componentRef.setInput('label', '');
     fixture.detectChanges();
-    expect(fixture.nativeElement.querySelector('.select__label-text')).toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('.select__label-text'),
+    ).toBeNull();
   });
 
   it('renders options from the options input', () => {
@@ -44,7 +48,9 @@ describe('Select', () => {
       { value: 'b', label: 'Option B' },
     ]);
     fixture.detectChanges();
-    const opts = fixture.nativeElement.querySelectorAll('option[value="a"], option[value="b"]');
+    const opts = fixture.nativeElement.querySelectorAll(
+      'option[value="a"], option[value="b"]',
+    );
     expect(opts.length).toBe(2);
   });
 
@@ -59,13 +65,30 @@ describe('Select', () => {
       expect(component.value).toBe('');
     });
 
+    it('renders the previously-selected option, not the first one, when writeValue runs after options are set', () => {
+      fixture.componentRef.setInput('options', [
+        { value: 'a', label: 'One' },
+        { value: 'b', label: 'Two' },
+        { value: 'c', label: 'Four' },
+      ]);
+      component.writeValue('c');
+      fixture.detectChanges();
+
+      const select = fixture.nativeElement.querySelector(
+        'select',
+      ) as HTMLSelectElement;
+      expect(select.value).toBe('c');
+    });
+
     it('calls onChange when option is selected', () => {
       const onChange = vi.fn();
       component.registerOnChange(onChange);
       fixture.componentRef.setInput('options', [{ value: 'x', label: 'X' }]);
       fixture.detectChanges();
 
-      const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+      const select = fixture.nativeElement.querySelector(
+        'select',
+      ) as HTMLSelectElement;
       select.value = 'x';
       select.dispatchEvent(new Event('change'));
 
@@ -77,14 +100,18 @@ describe('Select', () => {
       component.registerOnTouched(onTouched);
       fixture.detectChanges();
 
-      fixture.nativeElement.querySelector('select').dispatchEvent(new Event('blur'));
+      fixture.nativeElement
+        .querySelector('select')
+        .dispatchEvent(new Event('blur'));
       expect(onTouched).toHaveBeenCalled();
     });
 
     it('disables the select when setDisabledState(true)', () => {
       component.setDisabledState(true);
       fixture.detectChanges();
-      const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+      const select = fixture.nativeElement.querySelector(
+        'select',
+      ) as HTMLSelectElement;
       expect(select.disabled).toBe(true);
     });
   });

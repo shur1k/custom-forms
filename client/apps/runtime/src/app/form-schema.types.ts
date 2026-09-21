@@ -39,6 +39,7 @@ export interface StoredSchema {
       type: 'string';
       title: string;
       enum?: string[];
+      'x-enum-labels'?: string[];
       'x-ui': XUi;
     }
   >;

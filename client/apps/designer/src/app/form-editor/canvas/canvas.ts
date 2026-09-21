@@ -101,6 +101,7 @@ export class Canvas {
         showTitle: true,
         disabled: false,
         textColor: '#000000',
+        choices: [],
       },
     };
     this.componentDropped.emit(newComp);

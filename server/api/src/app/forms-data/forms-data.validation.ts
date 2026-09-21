@@ -37,7 +37,12 @@ export function validateFormValues(
       errors[field] = 'Expected a string value';
       continue;
     }
-    if (prop.enum && !prop.enum.includes(value)) {
+    if (
+      prop.enum &&
+      prop.enum.length > 0 &&
+      value !== '' &&
+      !prop.enum.includes(value)
+    ) {
       errors[field] = `Must be one of: ${prop.enum.join(', ')}`;
     }
   }

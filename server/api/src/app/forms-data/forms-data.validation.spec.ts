@@ -36,6 +36,26 @@ describe('validateFormValues', () => {
     expect(errors).toHaveProperty('role');
   });
 
+  it('allows an empty optional enum field left unselected', () => {
+    const errors = validateFormValues(schema, { name: 'Alice', role: '' });
+    expect(errors).toEqual({});
+  });
+
+  it('allows any value for an enum field with no configured options', () => {
+    const schemaWithEmptyEnum = {
+      properties: {
+        name: { type: 'string', title: 'Name' },
+        role: { type: 'string', title: 'Role', enum: [] },
+      },
+      required: ['name'],
+    };
+    const errors = validateFormValues(schemaWithEmptyEnum, {
+      name: 'Alice',
+      role: '',
+    });
+    expect(errors).toEqual({});
+  });
+
   it('flags a non-string value for a string field', () => {
     const errors = validateFormValues(schema, { name: 42 });
     expect(errors).toHaveProperty('name');

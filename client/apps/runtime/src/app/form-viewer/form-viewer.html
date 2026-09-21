@@ -51,8 +51,11 @@
   <p class="form-viewer__submit-message">{{ submitMessage() }}</p>
   }
 
-  <lib-button variant="secondary" (clicked)="onDeleteClick()"
-    >Delete my data</lib-button
-  >
+  <div class="form-viewer__actions">
+    <lib-button (clicked)="onSubmitClick()">Save</lib-button>
+    <lib-button variant="secondary" (clicked)="onDeleteClick()"
+      >Delete my data</lib-button
+    >
+  </div>
   }
 </div>

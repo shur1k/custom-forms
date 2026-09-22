@@ -49,6 +49,21 @@
         }
       </select>
     </label>
+
+    @if (component()!.type === 'button') {
+    <label class="props-panel__field">
+      <span class="props-panel__label">Button Color</span>
+      <select
+        class="props-panel__select"
+        [value]="component()!.props.bgColor"
+        (change)="updateProp('bgColor', $any($event.target).value)"
+      >
+        @for (opt of colorOptions; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </label>
+    }
   </div>
 
   @if (component()!.type === 'select') {

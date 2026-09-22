@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 
 @Component({
   selector: 'lib-button',
@@ -10,6 +15,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 export class Button {
   type = input<'button' | 'submit' | 'reset'>('button');
   variant = input<'primary' | 'secondary'>('primary');
+  bgColor = input<string | null>(null);
   disabled = input(false);
   clicked = output<void>();
 

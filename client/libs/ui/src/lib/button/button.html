@@ -2,6 +2,7 @@
   [type]="type()"
   [disabled]="disabled()"
   [class]="'btn btn--' + variant()"
+  [style.background]="bgColor()"
   (click)="onClick()"
 >
   <ng-content />

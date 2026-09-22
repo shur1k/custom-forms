@@ -22,14 +22,18 @@ describe('Button', () => {
 
   it('renders a button element with default type "button"', () => {
     fixture.detectChanges();
-    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    const btn = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement;
     expect(btn.type).toBe('button');
   });
 
   it('passes the type input to the native button', async () => {
     fixture.componentRef.setInput('type', 'submit');
     fixture.detectChanges();
-    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    const btn = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement;
     expect(btn.type).toBe('submit');
   });
 
@@ -53,7 +57,26 @@ describe('Button', () => {
   it('disables the native button when disabled input is true', () => {
     fixture.componentRef.setInput('disabled', true);
     fixture.detectChanges();
-    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    const btn = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement;
     expect(btn.disabled).toBe(true);
+  });
+
+  it('applies bgColor as the button background when set', () => {
+    fixture.componentRef.setInput('bgColor', '#ef4444');
+    fixture.detectChanges();
+    const btn = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement;
+    expect(btn.style.background).toContain('rgb(239, 68, 68)');
+  });
+
+  it('leaves background unset when bgColor is not provided', () => {
+    fixture.detectChanges();
+    const btn = fixture.nativeElement.querySelector(
+      'button',
+    ) as HTMLButtonElement;
+    expect(btn.style.background).toBe('');
   });
 });

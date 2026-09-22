@@ -47,7 +47,12 @@
       </select>
     </div>
     } @case ('button') {
-    <button class="canvas__btn" type="button" [disabled]="comp.props.disabled">
+    <button
+      class="canvas__btn"
+      type="button"
+      [disabled]="comp.props.disabled"
+      [style.background-color]="comp.props.bgColor"
+    >
       {{ comp.props.label }}
     </button>
     } @case ('text-area') {

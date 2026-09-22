@@ -49,6 +49,7 @@ interface RenderableAction {
   label: string;
   disabled: boolean;
   textColor: string;
+  bgColor: string;
   col: number;
   row: number;
   w: number;
@@ -302,6 +303,7 @@ export class FormViewer implements OnInit {
           label: action.label,
           disabled: action.disabled,
           textColor: action.textColor,
+          bgColor: action.bgColor,
           col: action.col,
           row: action.row,
           w: action.w,

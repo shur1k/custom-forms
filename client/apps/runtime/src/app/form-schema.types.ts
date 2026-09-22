@@ -27,6 +27,7 @@ export interface XAction {
   h: number;
   disabled: boolean;
   textColor: string;
+  bgColor: string;
 }
 
 export interface StoredSchema {

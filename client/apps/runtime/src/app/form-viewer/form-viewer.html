@@ -34,7 +34,10 @@
           [formControl]="form.controls[item.id]"
         />
         } @case ('button') {
-        <lib-button [disabled]="item.view.disabled" (clicked)="onSubmitClick()"
+        <lib-button
+          [disabled]="item.view.disabled"
+          [bgColor]="item.view.bgColor"
+          (clicked)="onSubmitClick()"
           >{{ item.view.label }}</lib-button
         >
         } }

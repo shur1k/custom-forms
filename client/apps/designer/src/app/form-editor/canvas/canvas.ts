@@ -101,6 +101,7 @@ export class Canvas {
         showTitle: true,
         disabled: false,
         textColor: '#000000',
+        bgColor: '#3b82f6',
         choices: [],
       },
     };

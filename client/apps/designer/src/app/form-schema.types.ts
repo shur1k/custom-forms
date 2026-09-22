@@ -23,6 +23,7 @@ export interface ComponentProps {
   showTitle: boolean;
   disabled: boolean;
   textColor: string;
+  bgColor: string;
   choices: SelectChoice[];
 }
 
@@ -58,6 +59,7 @@ interface XAction {
   h: number;
   disabled: boolean;
   textColor: string;
+  bgColor: string;
 }
 
 export interface StoredSchema {
@@ -100,6 +102,7 @@ export function schemaToComponents(
         showTitle: ui.showTitle ?? true,
         disabled: ui.disabled ?? false,
         textColor: ui.textColor ?? '#000000',
+        bgColor: '#3b82f6',
         choices: (prop.enum ?? []).map((value, i) => ({
           value,
           label: prop['x-enum-labels']?.[i] ?? value,
@@ -121,6 +124,7 @@ export function schemaToComponents(
         showTitle: true,
         disabled: action.disabled ?? false,
         textColor: action.textColor ?? '#000000',
+        bgColor: action.bgColor ?? '#3b82f6',
         choices: [],
       },
     });
@@ -148,6 +152,7 @@ export function componentsToSchema(
         h: comp.h,
         disabled: comp.props.disabled,
         textColor: comp.props.textColor,
+        bgColor: comp.props.bgColor,
       });
     } else {
       const choices = comp.props.choices.filter((c) => c.value.trim() !== '');

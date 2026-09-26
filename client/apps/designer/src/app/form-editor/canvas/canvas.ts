@@ -102,6 +102,7 @@ export class Canvas {
         disabled: false,
         textColor: '#000000',
         bgColor: '#3b82f6',
+        action: 'save',
         choices: [],
       },
     };

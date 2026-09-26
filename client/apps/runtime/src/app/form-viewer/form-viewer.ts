@@ -16,7 +16,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { BaseHttpService } from '@custom-forms/http';
 import {
@@ -26,7 +26,7 @@ import {
   SelectOption,
   TextArea,
 } from '@custom-forms/ui';
-import { StoredSchema } from '../form-schema.types';
+import { ButtonAction, StoredSchema } from '../form-schema.types';
 import { ItemErrorBoundary } from './item-error-boundary';
 
 export const GRID_COLS = 64;
@@ -50,6 +50,7 @@ interface RenderableAction {
   disabled: boolean;
   textColor: string;
   bgColor: string;
+  action: ButtonAction;
   col: number;
   row: number;
   w: number;
@@ -79,6 +80,7 @@ type RenderResult =
 export class FormViewer implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(BaseHttpService);
+  private readonly router = inject(Router);
 
   readonly schemaId = signal('');
   readonly storedSchema = signal<StoredSchema | null>(null);
@@ -159,6 +161,14 @@ export class FormViewer implements OnInit {
           this.isLoading.set(false);
         },
       });
+  }
+
+  onActionClick(action: ButtonAction): void {
+    if (action === 'back-to-list') {
+      this.router.navigate(['../..'], { relativeTo: this.route });
+      return;
+    }
+    this.onSubmitClick();
   }
 
   onSubmitClick(): void {
@@ -304,6 +314,7 @@ export class FormViewer implements OnInit {
           disabled: action.disabled,
           textColor: action.textColor,
           bgColor: action.bgColor,
+          action: action.action,
           col: action.col,
           row: action.row,
           w: action.w,

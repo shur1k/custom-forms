@@ -4,7 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, provideRouter } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 
 import { StoredSchema } from '../form-schema.types';
 import { FormViewer } from './form-viewer';
@@ -255,6 +255,38 @@ describe('FormViewer', () => {
 
       expect(component.form.controls['name'].value).toBe('');
       expect(component.submitMessage()).toBeTruthy();
+    });
+  });
+
+  describe('button action dispatch', () => {
+    it('saves the form when action is "save"', () => {
+      fixture.detectChanges();
+      http
+        .expectOne(API)
+        .flush({ schema: { schema: buildSchema({}) }, values: null });
+      fixture.detectChanges();
+
+      component.onActionClick('save');
+
+      http
+        .expectOne({ method: 'PUT', url: API })
+        .flush({ id: 'row-1', values: {} });
+      expect(component.submitMessage()).toBeTruthy();
+    });
+
+    it('navigates to the forms list when action is "back-to-list"', () => {
+      fixture.detectChanges();
+      http
+        .expectOne(API)
+        .flush({ schema: { schema: buildSchema({}) }, values: null });
+      fixture.detectChanges();
+
+      const router = TestBed.inject(Router);
+      const navigateSpy = vi.spyOn(router, 'navigate');
+
+      component.onActionClick('back-to-list');
+
+      expect(navigateSpy.mock.calls[0][0]).toEqual(['../..']);
     });
   });
 });

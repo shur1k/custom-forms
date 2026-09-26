@@ -37,7 +37,7 @@
         <lib-button
           [disabled]="item.view.disabled"
           [bgColor]="item.view.bgColor"
-          (clicked)="onSubmitClick()"
+          (clicked)="onActionClick(item.view.action)"
           >{{ item.view.label }}</lib-button
         >
         } }

@@ -1,4 +1,5 @@
 export type ComponentType = 'input' | 'select' | 'button' | 'text-area';
+export type ButtonAction = 'save' | 'back-to-list';
 
 export type Col = number;
 export type ColSpan = number;
@@ -24,6 +25,7 @@ export interface ComponentProps {
   disabled: boolean;
   textColor: string;
   bgColor: string;
+  action: ButtonAction;
   choices: SelectChoice[];
 }
 
@@ -60,6 +62,7 @@ interface XAction {
   disabled: boolean;
   textColor: string;
   bgColor: string;
+  action: ButtonAction;
 }
 
 export interface StoredSchema {
@@ -103,6 +106,7 @@ export function schemaToComponents(
         disabled: ui.disabled ?? false,
         textColor: ui.textColor ?? '#000000',
         bgColor: '#3b82f6',
+        action: 'save',
         choices: (prop.enum ?? []).map((value, i) => ({
           value,
           label: prop['x-enum-labels']?.[i] ?? value,
@@ -125,6 +129,7 @@ export function schemaToComponents(
         disabled: action.disabled ?? false,
         textColor: action.textColor ?? '#000000',
         bgColor: action.bgColor ?? '#3b82f6',
+        action: action.action ?? 'save',
         choices: [],
       },
     });
@@ -153,6 +158,7 @@ export function componentsToSchema(
         disabled: comp.props.disabled,
         textColor: comp.props.textColor,
         bgColor: comp.props.bgColor,
+        action: comp.props.action,
       });
     } else {
       const choices = comp.props.choices.filter((c) => c.value.trim() !== '');

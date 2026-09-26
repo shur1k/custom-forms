@@ -63,6 +63,19 @@
         }
       </select>
     </label>
+
+    <label class="props-panel__field">
+      <span class="props-panel__label">Button Action</span>
+      <select
+        class="props-panel__select"
+        [value]="component()!.props.action"
+        (change)="updateProp('action', $any($event.target).value)"
+      >
+        @for (opt of actionOptions; track opt.value) {
+        <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </label>
     }
   </div>
 

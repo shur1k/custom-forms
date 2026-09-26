@@ -35,6 +35,7 @@ const makeComp = (overrides: Partial<ComponentDef> = {}): ComponentDef => ({
     disabled: false,
     textColor: '#000000',
     bgColor: '#3b82f6',
+    action: 'save',
     choices: [],
   },
   ...overrides,
@@ -176,6 +177,7 @@ describe('FormEditor', () => {
         disabled: true,
         textColor: '#ef4444',
         bgColor: '#3b82f6',
+        action: 'save',
         choices: [],
       },
     });

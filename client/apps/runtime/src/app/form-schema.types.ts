@@ -18,6 +18,8 @@ export interface XUi {
   textColor: string;
 }
 
+export type ButtonAction = 'save' | 'back-to-list';
+
 export interface XAction {
   id: string;
   label: string;
@@ -28,6 +30,7 @@ export interface XAction {
   disabled: boolean;
   textColor: string;
   bgColor: string;
+  action: ButtonAction;
 }
 
 export interface StoredSchema {

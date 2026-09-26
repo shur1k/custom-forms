@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import {
+  ButtonAction,
   ComponentDef,
   ComponentProps,
   SelectChoice,
@@ -13,6 +14,11 @@ import {
 
 interface ColorOption {
   value: string;
+  label: string;
+}
+
+interface ActionOption {
+  value: ButtonAction;
   label: string;
 }
 
@@ -33,6 +39,11 @@ export class PropertiesPanel {
     { value: '#3b82f6', label: 'Blue' },
     { value: '#22c55e', label: 'Green' },
     { value: '#f59e0b', label: 'Amber' },
+  ];
+
+  readonly actionOptions: ActionOption[] = [
+    { value: 'save', label: 'Save' },
+    { value: 'back-to-list', label: 'Back to Forms List' },
   ];
 
   updateProp<K extends keyof ComponentProps>(
